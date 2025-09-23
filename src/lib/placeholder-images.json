@@ -1,0 +1,10 @@
+{
+  "placeholderImages": [
+    {
+      "id": "profile-photo",
+      "description": "Professional headshot of a software developer",
+      "imageUrl": "images/profile.jpg",
+      "imageHint": "professional headshot"
+    }
+  ]
+}
