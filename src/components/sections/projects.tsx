@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -30,6 +31,7 @@ import {
 } from '@/components/ui/carousel';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { AnimatedSection } from '../ui/animated-section';
 
 export function Projects() {
   const [showAll, setShowAll] = useState(false);
@@ -84,15 +86,21 @@ export function Projects() {
     </Card>
   );
 
+  const displayedProjects = showAll ? projects : projects.slice(0, 6);
+
   return (
     <SectionWrapper id="projects">
-      <SectionTitle>Projects</SectionTitle>
+      <AnimatedSection>
+        <SectionTitle>Projects</SectionTitle>
+      </AnimatedSection>
 
       <div className={cn('relative transition-all duration-500 ease-in-out')}>
         {isMobile || showAll ? (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+            {displayedProjects.map((project, index) => (
+              <AnimatedSection key={project.id} delay={index * 100}>
+                <ProjectCard project={project} />
+              </AnimatedSection>
             ))}
           </div>
         ) : (
@@ -106,11 +114,13 @@ export function Projects() {
               {projects.map((project) => (
                 <CarouselItem
                   key={project.id}
-                  className="basis-full md:basis-1/2"
+                  className="basis-full md:basis-1/2 flex"
                 >
-                  <div className="p-1 h-full">
-                    <ProjectCard project={project} />
-                  </div>
+                  <AnimatedSection variant="zoom" className="w-full">
+                    <div className="p-1 h-full">
+                      <ProjectCard project={project} />
+                    </div>
+                  </AnimatedSection>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -123,20 +133,22 @@ export function Projects() {
         )}
       </div>
 
-      {!isMobile && (
+      {!isMobile && projects.length > 6 && (
         <div className="mt-8 flex justify-center">
-          <Button
-            variant="ghost"
-            onClick={() => setShowAll(!showAll)}
-            className="group"
-          >
-            {showAll ? 'Show Less' : 'Show All'}
-            {showAll ? (
-              <ChevronUp className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />
-            ) : (
-              <ChevronDown className="ml-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
-            )}
-          </Button>
+          <AnimatedSection>
+            <Button
+              variant="ghost"
+              onClick={() => setShowAll(!showAll)}
+              className="group"
+            >
+              {showAll ? 'Show Less' : 'Show All'}
+              {showAll ? (
+                <ChevronUp className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />
+              ) : (
+                <ChevronDown className="ml-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
+              )}
+            </Button>
+          </AnimatedSection>
         </div>
       )}
     </SectionWrapper>

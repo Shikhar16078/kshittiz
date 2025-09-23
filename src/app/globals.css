@@ -106,22 +106,17 @@
     animation: neon-ring 4s linear infinite;
   }
   
-  .animate-breathing-neon {
-    animation: breathing-neon 3s ease-in-out infinite;
+  .interactive-glow {
+    box-shadow: 0 0 15px hsl(var(--glow) / 0.5),
+      0 0 30px hsl(var(--glow) / 0.4), 0 0 45px hsl(var(--glow) / 0.3),
+      0 0 60px hsl(var(--glow) / 0.2);
+    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
   }
 
-  @keyframes breathing-neon {
-    0%,
-    100% {
-      box-shadow: 0 0 10px hsl(var(--glow) / 0.4),
-        0 0 20px hsl(var(--glow) / 0.4), 0 0 30px hsl(var(--glow) / 0.3),
-        0 0 40px hsl(var(--glow) / 0.2);
-    }
-    50% {
-      box-shadow: 0 0 20px hsl(var(--glow) / 0.8),
-        0 0 30px hsl(var(--glow) / 0.8), 0 0 40px hsl(var(--glow) / 0.6),
-        0 0 50px hsl(var(--glow) / 0.4);
-    }
+  .interactive-glow:hover {
+    box-shadow: 0 0 30px hsl(var(--glow) / 0.9),
+      0 0 45px hsl(var(--glow) / 0.8), 0 0 60px hsl(var(--glow) / 0.7),
+      0 0 75px hsl(var(--glow) / 0.5);
   }
 
   @keyframes neon-ring {

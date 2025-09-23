@@ -3,16 +3,20 @@
 import { useRef, useEffect, useState, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
+type AnimationVariant = 'slideUp' | 'fadeIn' | 'zoom';
+
 interface AnimatedSectionProps {
   children: ReactNode;
   className?: string;
   delay?: number;
+  variant?: AnimationVariant;
 }
 
 export function AnimatedSection({
   children,
   className,
   delay = 0,
+  variant = 'slideUp',
 }: AnimatedSectionProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -20,10 +24,7 @@ export function AnimatedSection({
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
+        setIsVisible(entry.isIntersecting);
       },
       {
         rootMargin: '0px',
@@ -31,24 +32,32 @@ export function AnimatedSection({
       }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (ref.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        observer.unobserve(ref.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, []);
+
+  const animationClasses = {
+    slideUp: isVisible
+      ? 'opacity-100 translate-y-0'
+      : 'opacity-0 translate-y-20',
+    fadeIn: isVisible ? 'opacity-100' : 'opacity-0',
+    zoom: isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90',
+  };
 
   return (
     <div
       ref={ref}
       className={cn(
         'transition-all duration-700 ease-out',
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8',
+        animationClasses[variant],
         className
       )}
       style={{ transitionDelay: `${delay}ms` }}

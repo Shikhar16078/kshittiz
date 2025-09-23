@@ -1,127 +1,130 @@
+
 'use client';
 
-import { useState } from 'react';
-import { SectionWrapper, SectionTitle } from '../layout/section-wrapper';
+import {
+  SectionWrapper,
+  SectionTitle,
+} from '@/components/layout/section-wrapper';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '../ui/button';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  Code,
+  Server,
+  BrainCircuit,
+  Database,
+  GitMerge,
+  type LucideIcon,
+} from 'lucide-react';
+import { AnimatedSection } from '../ui/animated-section';
 
-const staticSkills = {
-  frontendSkills: [
-    'React',
-    'Next.js',
-    'TypeScript',
-    'JavaScript (ES6+)',
-    'Tailwind CSS',
-    'HTML5 & CSS3',
-    'Framer Motion',
-  ],
-  backendSkills: [
-    'Node.js',
-    'Python',
-    'Go',
-    'Java',
-    'REST APIs',
-    'gRPC',
-    'Microservices',
-  ],
-  aiSkills: [
-    'Genkit',
-    'TensorFlow',
-    'PyTorch',
-    'scikit-learn',
-    'OpenAI',
-    'LLM Integration',
-    'LangChain',
-  ],
-  databaseSkills: [
-    'PostgreSQL',
-    'MongoDB',
-    'Redis',
-    'SQL',
-    'NoSQL',
-    'Snowflake',
-  ],
-  generalSkills: [
-    'CI/CD',
-    'Docker',
-    'Git',
-    'Agile Methodologies',
-    'Problem Solving',
-    'Distributed Systems',
-    'Cloud Computing (Azure)',
-  ],
+type SkillCategory = {
+  title: string;
+  icon: LucideIcon;
+  skills: string[];
 };
 
-const allSkills = Object.values(staticSkills).flat();
-const skills1 = allSkills.slice(0, Math.ceil(allSkills.length / 2));
-const skills2 = allSkills.slice(Math.ceil(allSkills.length / 2));
+const skillCategories: SkillCategory[] = [
+  {
+    title: 'Frontend',
+    icon: Code,
+    skills: [
+      'React',
+      'Next.js',
+      'TypeScript',
+      'JavaScript (ES6+)',
+      'Tailwind CSS',
+      'HTML5 & CSS3',
+      'Framer Motion',
+    ],
+  },
+  {
+    title: 'Backend',
+    icon: Server,
+    skills: [
+      'Node.js',
+      'Python',
+      'Go',
+      'Java',
+      'REST APIs',
+      'gRPC',
+      'Microservices',
+    ],
+  },
+  {
+    title: 'AI/ML',
+    icon: BrainCircuit,
+    skills: [
+      'Genkit',
+      'TensorFlow',
+      'PyTorch',
+      'scikit-learn',
+      'OpenAI',
+      'LLM Integration',
+      'LangChain',
+    ],
+  },
+  {
+    title: 'Databases',
+    icon: Database,
+    skills: [
+      'PostgreSQL',
+      'MongoDB',
+      'Redis',
+      'SQL',
+      'NoSQL',
+      'Snowflake',
+    ],
+  },
+  {
+    title: 'General',
+    icon: GitMerge,
+    skills: [
+      'CI/CD',
+      'Docker',
+      'Git',
+      'Agile Methodologies',
+      'Problem Solving',
+      'Distributed Systems',
+      'Cloud Computing (Azure)',
+    ],
+  },
+];
 
 export function Skills() {
-  const [showAll, setShowAll] = useState(false);
-
-  const SkillMarquee = () => (
-    <div className="group relative w-full overflow-hidden h-24 flex flex-col justify-center gap-2">
-      <div className="relative w-full overflow-hidden">
-        <div className="animate-scroll-horizontal group-hover:[animation-play-state:paused] flex w-[200%] gap-2">
-          {[...skills1, ...skills1].map((skill, index) => (
-            <Badge
-              key={`${skill}-${index}-1`}
-              variant="secondary"
-              className="cursor-pointer select-none whitespace-nowrap border-primary/20 bg-primary/10 px-4 py-2 text-base text-primary shadow-sm transition-all hover:bg-primary/20 hover:shadow-md"
-            >
-              {skill}
-            </Badge>
-          ))}
-        </div>
-      </div>
-      <div className="relative w-full overflow-hidden">
-        <div className="animate-scroll-horizontal-reverse group-hover:[animation-play-state:paused] flex w-[200%] gap-2">
-          {[...skills2, ...skills2].map((skill, index) => (
-            <Badge
-              key={`${skill}-${index}-2`}
-              variant="secondary"
-              className="cursor-pointer select-none whitespace-nowrap border-primary/20 bg-primary/10 px-4 py-2 text-base text-primary shadow-sm transition-all hover:bg-primary/20 hover:shadow-md"
-            >
-              {skill}
-            </Badge>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  const AllSkillsGrid = () => (
-    <div className="flex flex-wrap justify-center gap-2">
-      {allSkills.map((skill, index) => (
-        <Badge
-          key={`${skill}-${index}`}
-          variant="secondary"
-          className="cursor-pointer select-none whitespace-nowrap border-primary/20 bg-primary/10 px-4 py-2 text-base text-primary shadow-sm transition-all hover:bg-primary/20 hover:shadow-md"
-        >
-          {skill}
-        </Badge>
-      ))}
-    </div>
-  );
-
   return (
     <SectionWrapper id="skills">
-      <SectionTitle>Skills</SectionTitle>
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-4">
-        {showAll ? <AllSkillsGrid /> : <SkillMarquee />}
-        <Button
-          variant="ghost"
-          onClick={() => setShowAll(!showAll)}
-          className="group"
-        >
-          {showAll ? 'Show Less' : 'Show All'}
-          {showAll ? (
-            <ChevronUp className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />
-          ) : (
-            <ChevronDown className="ml-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
-          )}
-        </Button>
+      <AnimatedSection>
+        <SectionTitle>My Expertise</SectionTitle>
+      </AnimatedSection>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {skillCategories.map((category, index) => (
+          <AnimatedSection key={category.title} delay={index * 100}>
+            <Card className="flex flex-col transition-transform duration-300 ease-in-out hover:-translate-y-1 h-full">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <category.icon className="h-8 w-8 text-primary" />
+                  <CardTitle className="font-headline text-xl">
+                    {category.title}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {category.skills.map((skill) => (
+                    <Badge key={skill} variant="secondary">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </AnimatedSection>
+        ))}
       </div>
     </SectionWrapper>
   );
