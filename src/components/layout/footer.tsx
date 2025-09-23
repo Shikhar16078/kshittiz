@@ -1,23 +1,26 @@
 'use client';
 
 import { personalData } from '@/lib/data';
-import Image from 'next/image';
-import Link from 'next/link';
+import { ChevronsUp } from 'lucide-react';
+import { Button } from '../ui/button';
 
 export function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="border-t">
       <div className="container mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/images/profile.jpg"
-            alt="Kshittiz profile photo"
-            width={24}
-            height={24}
-            className="rounded-full"
-          />
-          <span className="font-headline text-lg font-bold">Kshittiz Kumar</span>
-        </Link>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={scrollToTop}
+          aria-label="Back to top"
+          className="group"
+        >
+          <ChevronsUp className="h-6 w-6 transition-transform group-hover:-translate-y-1" />
+        </Button>
         <p className="text-sm text-muted-foreground">
           &copy;{new Date().getFullYear()} {personalData.name}. All rights
           reserved.

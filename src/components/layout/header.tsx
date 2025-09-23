@@ -1,11 +1,11 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { navLinks } from '@/lib/data';
 import { cn } from '@/lib/utils';
-import { Menu } from 'lucide-react';
+import { Menu, FileText } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '../ui/button';
 import { ThemeToggleButton } from '../ui/theme-toggle-button';
@@ -15,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { SummaryDialog } from '../sections/summary-dialog';
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -91,16 +92,12 @@ export function Header() {
     >
       <TooltipProvider>
         <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/images/profile.jpg"
-              alt="Kshittiz profile photo"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-            <span className="font-headline text-2xl font-bold">Kshittiz</span>
-          </Link>
+          <SummaryDialog>
+            <Button variant="ghost">
+              <FileText className="mr-2 h-5 w-5" />
+              Summary
+            </Button>
+          </SummaryDialog>
 
           <nav className="hidden items-center gap-1 md:flex">
             <NavLinkItems />

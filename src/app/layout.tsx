@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Kshittiz Kumar',
   description: 'A modern portfolio for a top-notch software developer.',
   icons: {
-    icon: 'images/app_icon.png',
+    icon: '/images/app_icon.png',
   },
 };
 
@@ -37,9 +37,9 @@ export default function RootLayout({
       <body className="font-body bg-background text-foreground antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
           disableTransitionOnChange
+          themes={['light', 'dark', 'fresh']}
         >
           {children}
           <Toaster />

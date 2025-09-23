@@ -21,7 +21,10 @@ import type {
 export const personalData: PersonalData = {
   name: 'Kshittiz Kumar',
   title: 'Senior Software Engineer at Microsoft | FactSet | PayPal',
-  bio: 'A seasoned software engineer with a passion for building scalable and efficient solutions. Experienced in cloud technologies, distributed systems, and backend development, with a proven track record of delivering high-quality software at top tech companies.',
+  bio: [
+    'A seasoned software engineer with a passion for building scalable and efficient solutions. Experienced in cloud technologies, distributed systems, and backend development, with a proven track record of delivering high-quality software at top tech companies.',
+    'I thrive in collaborative environments, continuously learning and applying new technologies to solve complex problems and drive innovation.',
+  ],
   image: 'profile-photo',
   contact: {
     email: 'kshittiz.k@gmail.com',

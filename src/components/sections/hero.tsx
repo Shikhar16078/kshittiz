@@ -4,9 +4,22 @@ import Image from 'next/image';
 import { personalData } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 export function Hero() {
+  const { theme } = useTheme();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const profileImage =
+    isMounted && theme === 'dark'
+      ? '/images/profile_dark.jpeg'
+      : '/images/profile.jpg';
+
   return (
     <section id="about" className="py-24 sm:py-32">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -34,11 +47,11 @@ export function Hero() {
               </p>
             </div>
             <p className="mt-6 max-w-xl text-lg text-foreground/70">
-              {personalData.bio}
+              {personalData.bio[0]}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Button asChild size="lg" className="w-auto px-8">
-                <Link href="#contact">Contact Me</Link>              
+                <Link href="#contact">Contact Me</Link>
               </Button>
               <div className="flex items-center gap-4">
                 {personalData.contact.social.map((social) => (
@@ -64,15 +77,17 @@ export function Hero() {
           </div>
           <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
             <div className="relative h-80 w-80">
-              <Image
-                src="/images/profile.jpg"
-                alt="Profile Photo"
-                width={400}
-                height={400}
-                priority
-                className="relative h-full w-full rounded-full object-cover animate-breathing-neon"
-                data-ai-hint="professional headshot"
-              />
+              {isMounted && (
+                <Image
+                  src={profileImage}
+                  alt="Profile Photo"
+                  width={400}
+                  height={400}
+                  priority
+                  className="relative h-full w-full rounded-full object-cover animate-breathing-neon"
+                  data-ai-hint="professional headshot"
+                />
+              )}
             </div>
           </div>
         </div>

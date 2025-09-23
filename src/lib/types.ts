@@ -15,7 +15,7 @@ export type SocialLink = {
 export type PersonalData = {
   name: string;
   title: string;
-  bio: string;
+  bio: string[];
   image: string;
   contact: {
     email: string;
