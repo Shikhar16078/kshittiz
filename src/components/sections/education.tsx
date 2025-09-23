@@ -11,11 +11,18 @@ import {
   CardContent,
   CardDescription,
 } from '@/components/ui/card';
-import { CalendarDays, CheckCircle, Award, BookOpen, FileText } from 'lucide-react';
+import {
+  CalendarDays,
+  CheckCircle,
+  Award,
+  BookOpen,
+  FileText,
+} from 'lucide-react';
 import Image from 'next/image';
 import { AnimatedSection } from '../ui/animated-section';
 import { Button } from '../ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Separator } from '../ui/separator';
 
 const educationLogos: { [key: string]: string } = {
   'North Carolina State University': '/images/ncstate.jpg',
@@ -41,15 +48,15 @@ export function Education() {
           const isCoursesVisible = showCourses[index];
           return (
             <AnimatedSection key={index} delay={index * 100}>
-              <Card className="flex h-full min-h-[300px] flex-col transition-transform duration-300 ease-in-out hover:-translate-y-1">
-                <CardHeader>
+              <Card className="flex h-full flex-col transition-transform duration-300 ease-in-out hover:-translate-y-1">
+                <CardHeader className="min-h-[160px]">
                   <div className="flex items-start gap-4">
                     <Image
                       src={educationLogos[edu.institution]}
                       alt={`${edu.institution} logo`}
                       width={48}
                       height={48}
-                      className="h-12 w-12 shrink-0 rounded-full object-cover"
+                      className="h-12 w-12 shrink-0 rounded-md object-cover"
                     />
                     <div className="flex-grow">
                       <CardTitle className="font-headline text-xl">
@@ -75,7 +82,7 @@ export function Education() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="flex flex-grow flex-col justify-between">
+                <CardContent className="flex flex-grow flex-col">
                   <div className="relative flex-grow">
                     <AnimatePresence mode="wait" initial={false}>
                       <motion.div
@@ -84,30 +91,41 @@ export function Education() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
+                        className="h-full"
                       >
                         {isCoursesVisible ? (
-                          <ul className="grid grid-cols-1 gap-2 pt-4">
-                            {edu.courses.map((course) => (
-                              <li
-                                key={course}
-                                className="flex items-start gap-2"
-                              >
-                                <CheckCircle className="h-4 w-4 mt-1 shrink-0 text-primary" />
-                                <span className="text-muted-foreground">
-                                  {course}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
+                          <div>
+                            <Separator className="my-4" />
+                            <h3 className="mb-2 font-headline text-lg font-bold text-primary">
+                              Relevant Courses
+                            </h3>
+                            <ul className="grid grid-cols-1 gap-2 pt-2">
+                              {edu.courses.map((course) => (
+                                <li
+                                  key={course}
+                                  className="flex items-start gap-2"
+                                >
+                                  <CheckCircle className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                                  <span className="text-muted-foreground">
+                                    {course}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         ) : (
-                          <p className="mt-4 flex-grow text-muted-foreground">
-                            {edu.description}
-                          </p>
+                          <div>
+                            <Separator className="my-4" />
+                            <p className="mt-4 flex-grow text-muted-foreground">
+                              {edu.description}
+                            </p>
+                          </div>
                         )}
                       </motion.div>
                     </AnimatePresence>
                   </div>
                   <div className="mt-auto pt-4">
+                    <Separator className="mb-4" />
                     <Button
                       variant="link"
                       onClick={() => toggleView(index)}
