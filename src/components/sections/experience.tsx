@@ -40,7 +40,7 @@ export function Experience() {
   return (
     <SectionWrapper id="experience">
       <AnimatedSection>
-        <SectionTitle>Work Experience</SectionTitle>
+        <SectionTitle>Experience</SectionTitle>
       </AnimatedSection>
       <div className="relative flex flex-col gap-y-12">
         <div className="absolute left-3 top-5 -z-10 h-[calc(100%-2rem)] w-0.5 bg-border md:left-5"></div>

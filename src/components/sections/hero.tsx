@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -22,7 +23,10 @@ export function Hero() {
       : '/images/profile.jpg';
 
   return (
-    <section id="about" className="py-24 sm:py-32">
+    <section
+      id="about"
+      className="flex min-h-screen flex-col py-16 sm:py-32"
+    >
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           <div className="order-2 lg:order-1">
