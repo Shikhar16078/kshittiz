@@ -15,12 +15,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Github,
   ChevronDown,
   ChevronUp,
   CalendarDays,
   FolderKanban,
 } from 'lucide-react';
+import { Github } from '@/components/icons/brand-icons';
 import {
   Carousel,
   CarouselContent,
@@ -61,7 +61,7 @@ export function Projects() {
         </div>
         <CardDescription>{project.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow">
+      <CardContent className="grow">
         <div className="flex flex-wrap gap-2">
           {project.techStack.map((tech) => (
             <Badge key={tech} variant="secondary">

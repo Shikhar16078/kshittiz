@@ -5,11 +5,9 @@ import {
   Home,
   Mail,
   Wrench,
-  Github,
-  Linkedin,
-  Youtube,
   BrainCircuit,
 } from 'lucide-react';
+import { Github, Linkedin, Youtube } from '@/components/icons/brand-icons';
 import type {
   PersonalData,
   WorkExperience,

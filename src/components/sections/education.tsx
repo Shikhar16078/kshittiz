@@ -58,7 +58,7 @@ export function Education() {
                       height={48}
                       className="h-12 w-12 shrink-0 rounded-md object-cover"
                     />
-                    <div className="flex-grow">
+                    <div className="grow">
                       <CardTitle className="font-headline text-xl">
                         {edu.degree}
                       </CardTitle>
@@ -82,8 +82,8 @@ export function Education() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="flex flex-grow flex-col">
-                  <div className="relative flex-grow">
+                <CardContent className="flex grow flex-col">
+                  <div className="relative grow">
                     <AnimatePresence mode="wait" initial={false}>
                       <motion.div
                         key={isCoursesVisible ? 'courses' : 'description'}
@@ -116,7 +116,7 @@ export function Education() {
                         ) : (
                           <div>
                             <Separator className="my-4" />
-                            <p className="mt-4 flex-grow text-muted-foreground">
+                            <p className="mt-4 grow text-muted-foreground">
                               {edu.description}
                             </p>
                           </div>

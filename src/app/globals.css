@@ -1,6 +1,123 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --breakpoint-2xl: 1400px;
+
+  --font-body: Inter, sans-serif;
+  --font-headline: Space Grotesk, sans-serif;
+  --font-code: monospace;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility animate-neon-ring {
+  animation: neon-ring 4s linear infinite;
+}
+
+@utility interactive-glow {
+  box-shadow:
+    0 0 15px hsl(var(--glow) / 0.5),
+    0 0 30px hsl(var(--glow) / 0.4),
+    0 0 45px hsl(var(--glow) / 0.3),
+    0 0 60px hsl(var(--glow) / 0.2);
+  transition:
+    box-shadow 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow:
+      0 0 30px hsl(var(--glow) / 0.9),
+      0 0 45px hsl(var(--glow) / 0.8),
+      0 0 60px hsl(var(--glow) / 0.7),
+      0 0 75px hsl(var(--glow) / 0.5);
+  }
+}
+
+@utility animate-scroll-horizontal {
+  animation: scroll-horizontal 20s linear infinite;
+}
+
+@utility animate-scroll-horizontal-reverse {
+  animation: scroll-horizontal-reverse 20s linear infinite;
+}
 
 @layer base {
   :root {
@@ -102,23 +219,6 @@
 }
 
 @layer utilities {
-  .animate-neon-ring {
-    animation: neon-ring 4s linear infinite;
-  }
-  
-  .interactive-glow {
-    box-shadow: 0 0 15px hsl(var(--glow) / 0.5),
-      0 0 30px hsl(var(--glow) / 0.4), 0 0 45px hsl(var(--glow) / 0.3),
-      0 0 60px hsl(var(--glow) / 0.2);
-    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
-  }
-
-  .interactive-glow:hover {
-    box-shadow: 0 0 30px hsl(var(--glow) / 0.9),
-      0 0 45px hsl(var(--glow) / 0.8), 0 0 60px hsl(var(--glow) / 0.7),
-      0 0 75px hsl(var(--glow) / 0.5);
-  }
-
   @keyframes neon-ring {
     0% {
       transform: rotate(0deg);
@@ -149,14 +249,6 @@
     100% {
       background-position: 0% 50%;
     }
-  }
-
-  .animate-scroll-horizontal {
-    animation: scroll-horizontal 20s linear infinite;
-  }
-  
-  .animate-scroll-horizontal-reverse {
-    animation: scroll-horizontal-reverse 20s linear infinite;
   }
 
   @keyframes scroll-horizontal {
