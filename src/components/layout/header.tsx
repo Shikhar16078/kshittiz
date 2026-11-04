@@ -18,6 +18,7 @@ import { Menu, FileText, FileDown } from 'lucide-react';
 import { navLinks } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { scrollToSection } from '@/lib/scroll-to-section';
+import { EXPERIENCE_SHOW, PROJECTS_FILTER } from '@/lib/events';
 import {
   DURATION,
   EASE_OUT,
@@ -73,6 +74,9 @@ const SHOW_AFTER = 12;
 const TOP_ZONE = 96;
 // Input that means the user is scrolling by hand again (ends the pin set by a nav click).
 const USER_SCROLL_EVENTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
+
+// Cross-section jumps that scroll the page (see src/lib/events.ts).
+const JUMP_EVENTS = [EXPERIENCE_SHOW, PROJECTS_FILTER] as const;
 
 const slide: Transition = { type: 'spring', stiffness: 420, damping: 42, mass: 0.8 };
 
@@ -145,6 +149,16 @@ function useHideOnScroll() {
     setHidden(false);
   };
 
+  // Cross-section jumps (a skill's "where used", the hero company strip, Education's projects
+  // link) scroll like a nav click, so they keep the header shown the same way.
+  // (pin only touches refs and a state setter, so the listener added on mount stays valid.)
+  useEffect(() => {
+    for (const type of JUMP_EVENTS) window.addEventListener(type, pin);
+    return () => {
+      for (const type of JUMP_EVENTS) window.removeEventListener(type, pin);
+    };
+  }, []);
+
   return { hidden, setHidden, scrolled, pin };
 }
 
@@ -183,7 +197,7 @@ function DesktopNav({
               aria-current={isActive ? 'true' : undefined}
               style={{ borderRadius: 9999 }}
               className={cn(
-                'relative flex h-10 items-center px-[11px] text-sm font-medium transition-colors',
+                'relative flex h-11 items-center px-[11px] text-sm font-medium transition-colors pointer-fine:h-10',
                 focusRing,
                 isActive ? 'text-primary-ink' : 'text-foreground/70 hover:text-foreground',
               )}

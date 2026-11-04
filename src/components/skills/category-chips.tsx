@@ -51,7 +51,7 @@ export function CategoryChips({
                 onClick={() => onChange(f)}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  'relative flex h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm font-medium transition-colors md:h-10',
+                  'relative flex h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm font-medium transition-colors md:pointer-fine:h-10',
                   active
                     ? 'border-transparent text-foreground'
                     : 'border-border/60 bg-card/40 text-muted-foreground hover:border-border hover:text-foreground',
@@ -81,7 +81,7 @@ export function CategoryChips({
         title={still ? 'Resume' : 'Pause'}
         whileTap={{ scale: 0.92 }}
         className={cn(
-          'flex size-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/40 text-muted-foreground transition-colors hover:border-border hover:text-foreground md:size-10',
+          'flex size-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card/40 text-muted-foreground transition-colors hover:border-border hover:text-foreground md:pointer-fine:size-10',
           focusRing,
           !showToggle && 'hidden'
         )}

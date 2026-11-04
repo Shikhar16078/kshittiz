@@ -16,13 +16,15 @@ export function RoleChip({ className }: { className?: string }) {
   return (
     <h2
       className={cn(
-        'inline-flex max-w-full items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1.5 pl-3.5 pr-1.5 font-headline text-sm font-medium text-foreground/90 shadow-sm sm:gap-2.5 sm:text-base',
+        // Below 360px the title and company don't fit on one line: the company pill wraps under
+        // the title (centred, no separator) instead of running off the screen.
+        'inline-flex max-w-full items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1.5 pl-3.5 pr-1.5 font-headline text-sm font-medium text-foreground/90 shadow-sm max-[359px]:flex-wrap max-[359px]:justify-center max-[359px]:gap-y-1.5 max-[359px]:rounded-3xl max-[359px]:px-3 sm:gap-2.5 sm:text-base',
         className,
       )}
     >
       <LiveDot className="size-2" />
       <span className="whitespace-nowrap">{current.role}</span>
-      <span aria-hidden className="text-muted-foreground">
+      <span aria-hidden className="text-muted-foreground max-[359px]:hidden">
         ·
       </span>
       <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-background/80 py-1 pl-2 pr-3.5 sm:py-1.5 sm:pl-2.5 sm:pr-4">
