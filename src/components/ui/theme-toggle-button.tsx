@@ -1,35 +1,75 @@
-'use client';
+"use client"
 
-import { useEffect, useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { AnimatePresence, m } from 'motion/react';
+import { useRef, useSyncExternalStore, type MouseEvent } from "react"
+import { Moon, Sparkles, Sun, type LucideIcon } from "lucide-react"
+import { useTheme } from "next-themes"
+import { AnimatePresence, m } from "motion/react"
 
-import { Button } from '@/components/ui/button';
+import { MotionButton } from "@/components/ui/motion-button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { DURATION, EASE_OUT } from '@/lib/motion';
+} from "@/components/ui/dropdown-menu"
+import { DURATION, EASE_OUT, springSnappy } from "@/lib/motion"
+import { cn } from "@/lib/utils"
+import {
+  centreOf,
+  switchTheme,
+  THEMES,
+  type ThemeName,
+} from "@/lib/theme-transition"
 
-export function ThemeToggleButton() {
-  const { setTheme, resolvedTheme } = useTheme();
-  // The theme is only known in the browser; until then render an empty slot of the same size.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+const THEME_META: Record<ThemeName, { label: string; icon: LucideIcon }> = {
+  light: { label: "Light", icon: Sun },
+  dark: { label: "Dark", icon: Moon },
+  fresh: { label: "Fresh", icon: Sparkles },
+}
 
-  const Icon = resolvedTheme === 'dark' ? Moon : Sun;
+const isTheme = (value: string | undefined): value is ThemeName =>
+  !!value && (THEMES as readonly string[]).includes(value)
+
+const noopSubscribe = () => () => {}
+
+/** The active theme once known in the browser; undefined during server render and hydration. */
+function useActiveTheme() {
+  const { resolvedTheme, setTheme } = useTheme()
+  const mounted = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  )
+  const active = mounted && isTheme(resolvedTheme) ? resolvedTheme : undefined
+  return { active, setTheme }
+}
+
+export function ThemeToggleButton({
+  onOpenChange,
+  className,
+}: {
+  onOpenChange?: (open: boolean) => void
+  className?: string
+}) {
+  const { active, setTheme } = useActiveTheme()
+  const trigger = useRef<HTMLButtonElement>(null)
+  const Icon = active ? THEME_META[active].icon : null
 
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <MotionButton
+          ref={trigger}
+          feel="pop"
+          variant="ghost"
+          size="icon"
+          className={cn("size-11 rounded-full", className)}
+        >
           <AnimatePresence mode="wait" initial={false}>
-            {mounted && (
+            {Icon && (
               <m.span
-                key={resolvedTheme}
+                key={active}
                 initial={{ rotate: -90, scale: 0, opacity: 0 }}
                 animate={{
                   rotate: 0,
@@ -49,20 +89,77 @@ export function ThemeToggleButton() {
               </m.span>
             )}
           </AnimatePresence>
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+          <span className="sr-only">
+            Change theme{active ? ` (current: ${THEME_META[active].label})` : ""}
+          </span>
+        </MotionButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('fresh')}>
-          Fresh
-        </DropdownMenuItem>
+      <DropdownMenuContent align="end" className="min-w-40">
+        <DropdownMenuRadioGroup
+          value={active ?? ""}
+          onValueChange={(value) => {
+            // The trigger stays mounted while the menu closes, so its centre is the origin.
+            if (isTheme(value) && value !== active) {
+              switchTheme(value, setTheme, centreOf(trigger.current))
+            }
+          }}
+        >
+          {THEMES.map((theme) => {
+            const { label, icon: ItemIcon } = THEME_META[theme]
+            return (
+              <DropdownMenuRadioItem key={theme} value={theme}>
+                <ItemIcon />
+                {label}
+              </DropdownMenuRadioItem>
+            )
+          })}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
+}
+
+/** Segmented Light / Dark / Fresh control (mobile menu); the circle grows from the tapped option. */
+export function ThemeSwitcherRow({ className }: { className?: string }) {
+  const { active, setTheme } = useActiveTheme()
+
+  const choose = (theme: ThemeName) => (e: MouseEvent<HTMLButtonElement>) => {
+    if (theme !== active) switchTheme(theme, setTheme, centreOf(e.currentTarget))
+  }
+
+  return (
+    <div
+      role="group"
+      aria-label="Theme"
+      className={cn("grid grid-cols-3 gap-1 rounded-full border bg-muted/40 p-1", className)}
+    >
+      {THEMES.map((theme) => {
+        const { label, icon: ItemIcon } = THEME_META[theme]
+        const checked = theme === active
+        return (
+          <m.button
+            key={theme}
+            type="button"
+            whileTap={{ scale: 0.95 }}
+            aria-pressed={checked}
+            onClick={choose(theme)}
+            className={cn(
+              "relative flex min-h-11 items-center justify-center gap-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              checked ? "text-primary" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {checked && (
+              <m.span
+                layoutId="theme-row-active"
+                transition={springSnappy}
+                className="absolute inset-0 rounded-full bg-background shadow-sm"
+              />
+            )}
+            <ItemIcon className="relative h-4 w-4" />
+            <span className="relative">{label}</span>
+          </m.button>
+        )
+      })}
+    </div>
+  )
 }

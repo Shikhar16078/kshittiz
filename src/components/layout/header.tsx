@@ -1,14 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import type { SiteConfig } from '@/lib/site-config';
+
+import { useEffect, useRef, useState } from 'react';
 import {
+  AnimatePresence,
+  LayoutGroup,
   m,
   useMotionValueEvent,
+  useReducedMotion,
   useScroll,
   useSpring,
+  type Transition,
   type Variants,
 } from 'motion/react';
-import { Menu, FileText } from 'lucide-react';
+import { Menu, FileText, FileDown } from 'lucide-react';
 import { navLinks } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { scrollToSection } from '@/lib/scroll-to-section';
@@ -25,17 +31,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { ThemeToggleButton } from '@/components/ui/theme-toggle-button';
+import { MotionButton } from '@/components/ui/motion-button';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  ThemeSwitcherRow,
+  ThemeToggleButton,
+} from '@/components/ui/theme-toggle-button';
 import { SummaryDialog } from '@/components/sections/summary-dialog';
+import { Magnetic } from '@/components/motion/magnetic';
 
 type NavigateHandler = (e: React.MouseEvent<HTMLAnchorElement>) => void;
+
+const focusRing =
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 
 /** Tracks which section is under the middle of the screen. */
 function useActiveSection() {
@@ -58,6 +65,70 @@ function useActiveSection() {
   return active;
 }
 
+// Scroll distance (px) in one direction before the header hides / comes back. Accumulated, so a
+// slow scroll still counts, while jitter from momentum or rubber-banding doesn't.
+const HIDE_AFTER = 24;
+const SHOW_AFTER = 12;
+/** Always shown this close to the top. */
+const TOP_ZONE = 96;
+// Input that means the user is scrolling by hand again (ends the pin set by a nav click).
+const USER_SCROLL_EVENTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
+
+const slide: Transition = { type: 'spring', stiffness: 420, damping: 42, mass: 0.8 };
+
+/**
+ * True while the header should be tucked away: scrolling down past the top zone. Only flips on a
+ * direction change, so it's a handful of renders, not one per scroll frame.
+ */
+function useHideOnScroll() {
+  const { scrollY } = useScroll();
+  const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const last = useRef(0);
+  const travel = useRef(0);
+  // Set by a nav click: the jump (and the settled section) keeps the header shown, so the section
+  // top stays framed under it (scroll-margin-top: 4rem) instead of leaving a 64 px gap. It's
+  // released by the next real user input, not a timer, since smooth scrolls vary in length.
+  const pinned = useRef(false);
+
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    setScrolled(y > 10);
+    const delta = y - last.current;
+    last.current = y;
+    // Reset the run whenever the direction flips.
+    travel.current =
+      Math.sign(delta) === Math.sign(travel.current) ? travel.current + delta : delta;
+
+    if (y < TOP_ZONE || pinned.current) setHidden(false);
+    else if (travel.current > HIDE_AFTER) setHidden(true);
+    else if (travel.current < -SHOW_AFTER) setHidden(false);
+  });
+
+  useEffect(() => {
+    last.current = window.scrollY;
+    setScrolled(window.scrollY > 10);
+    const release = () => {
+      pinned.current = false;
+    };
+    for (const type of USER_SCROLL_EVENTS) {
+      window.addEventListener(type, release, { passive: true, capture: true });
+    }
+    return () => {
+      for (const type of USER_SCROLL_EVENTS) {
+        window.removeEventListener(type, release, { capture: true });
+      }
+    };
+  }, []);
+
+  const pin = () => {
+    pinned.current = true;
+    travel.current = 0;
+    setHidden(false);
+  };
+
+  return { hidden, setHidden, scrolled, pin };
+}
+
 function DesktopNav({
   active,
   onNavigate,
@@ -65,41 +136,80 @@ function DesktopNav({
   active: string;
   onNavigate: NavigateHandler;
 }) {
+  // Hovered or keyboard-focused item: its label expands alongside the active one's.
+  const [peek, setPeek] = useState<string | null>(null);
+
   return (
-    <nav className="hidden items-center gap-1 md:flex">
-      {navLinks.map((link) => {
-        const isActive = link.href === active;
-        return (
-          <Tooltip key={link.href}>
-            <TooltipTrigger asChild>
-              <a
-                href={link.href}
-                onClick={onNavigate}
-                aria-current={isActive ? 'true' : undefined}
-                className={cn(
-                  'relative flex items-center rounded-md p-2 transition-colors hover:text-primary',
-                  isActive ? 'text-primary' : 'text-foreground/70',
-                )}
-              >
-                {/* One highlight that slides to whichever section is in view. */}
-                {isActive && (
+    <LayoutGroup id="desktop-nav">
+      <nav
+        aria-label="Sections"
+        className="hidden items-center gap-0.5 md:flex"
+        onPointerLeave={() => setPeek(null)}
+      >
+        {navLinks.map((link) => {
+          const isActive = link.href === active;
+          const expanded = isActive || peek === link.href;
+          return (
+            // `layout` (a transform-based FLIP) lets each pill grow and its neighbours make room
+            // without animating width.
+            <m.a
+              key={link.href}
+              layout
+              transition={springSnappy}
+              href={link.href}
+              onClick={onNavigate}
+              onPointerEnter={() => setPeek(link.href)}
+              onFocus={() => setPeek(link.href)}
+              onBlur={() => setPeek((p) => (p === link.href ? null : p))}
+              aria-current={isActive ? 'true' : undefined}
+              style={{ borderRadius: 9999 }}
+              className={cn(
+                'relative flex h-10 items-center px-[11px] text-sm font-medium transition-colors',
+                focusRing,
+                isActive ? 'text-primary' : 'text-foreground/70 hover:text-foreground',
+              )}
+            >
+              {/* One highlight that slides to whichever section is in view. */}
+              {isActive && (
+                <m.span
+                  layoutId="nav-active"
+                  transition={springSnappy}
+                  style={{ borderRadius: 9999 }}
+                  className="absolute inset-0 bg-primary/10 ring-1 ring-primary/20"
+                />
+              )}
+              <m.span layout="position" className="relative flex">
+                <link.icon aria-hidden className="h-[18px] w-[18px]" />
+              </m.span>
+              {/* popLayout takes a leaving label out of the flow at once, so the pill shrinks
+                  while the label fades instead of after. */}
+              <AnimatePresence mode="popLayout" initial={false}>
+                {expanded ? (
                   <m.span
-                    layoutId="nav-active"
-                    transition={springSnappy}
-                    className="absolute inset-0 rounded-md bg-accent"
-                  />
+                    key="label"
+                    layout="position"
+                    initial={{ opacity: 0, x: -4 }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      transition: { duration: DURATION.fast, ease: EASE_OUT },
+                    }}
+                    exit={{ opacity: 0, transition: { duration: 0.12 } }}
+                    className="relative whitespace-nowrap pl-1.5"
+                  >
+                    {link.label}
+                  </m.span>
+                ) : (
+                  <span key="sr" className="sr-only">
+                    {link.label}
+                  </span>
                 )}
-                <link.icon className="relative h-5 w-5" />
-                <span className="sr-only">{link.label}</span>
-              </a>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p>{link.label}</p>
-            </TooltipContent>
-          </Tooltip>
-        );
-      })}
-    </nav>
+              </AnimatePresence>
+            </m.a>
+          );
+        })}
+      </nav>
+    </LayoutGroup>
   );
 }
 
@@ -122,10 +232,11 @@ function MobileNav({
 }) {
   return (
     <m.nav
+      aria-label="Sections"
       initial="hidden"
       animate="show"
       variants={staggerChildren(0.05, 0.15)}
-      className="mt-8 flex flex-col gap-2"
+      className="mt-6 flex flex-col gap-1"
     >
       {navLinks.map((link) => {
         const isActive = link.href === active;
@@ -135,20 +246,22 @@ function MobileNav({
             href={link.href}
             onClick={onNavigate}
             variants={mobileLink}
+            whileTap={{ scale: 0.98 }}
             aria-current={isActive ? 'true' : undefined}
             className={cn(
-              'relative flex items-center gap-3 rounded-lg px-3 py-2 text-lg font-medium transition-colors hover:text-primary',
-              isActive ? 'text-primary' : 'text-foreground/70',
+              'relative flex min-h-12 items-center gap-3 rounded-xl px-3 text-lg font-medium transition-colors',
+              focusRing,
+              isActive ? 'text-primary' : 'text-foreground/80 hover:text-foreground',
             )}
           >
             {isActive && (
               <m.span
                 layoutId="mobile-nav-active"
                 transition={springSnappy}
-                className="absolute inset-0 rounded-lg bg-primary/10"
+                className="absolute inset-0 rounded-xl bg-primary/10"
               />
             )}
-            <link.icon className="relative h-5 w-5" />
+            <link.icon aria-hidden className="relative h-5 w-5" />
             <span className="relative">{link.label}</span>
           </m.a>
         );
@@ -174,60 +287,135 @@ function ScrollProgress() {
   );
 }
 
-export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const active = useActiveSection();
+function ResumeLink({ href, className }: { href: string; className?: string }) {
+  return (
+    <MotionButton
+      asChild
+      className={cn('h-11 gap-2 rounded-full px-4', className)}
+    >
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        <FileDown aria-hidden className="h-4 w-4" />
+        Résumé
+        <span className="sr-only">(opens in a new tab)</span>
+      </a>
+    </MotionButton>
+  );
+}
 
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, 'change', (y) => setIsScrolled(y > 10));
-  useEffect(() => setIsScrolled(window.scrollY > 10), []);
+const sheetFooter: Variants = {
+  hidden: { opacity: 0, y: RISE },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: DURATION.base, ease: EASE_OUT, delay: 0.3 },
+  },
+};
+
+export function Header({ config }: { config: SiteConfig }) {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const active = useActiveSection();
+  const reduce = useReducedMotion();
+  const { hidden, setHidden, scrolled, pin } = useHideOnScroll();
+
+  // Never tucked away while something in it is open or focused; with reduced motion it stays put.
+  const tucked = hidden && !reduce && !isSheetOpen && !isMenuOpen;
 
   const handleLinkClick: NavigateHandler = (e) => {
     scrollToSection(e);
+    pin();
     setIsSheetOpen(false);
   };
 
   return (
-    <header
+    <m.header
+      data-site-header
+      initial={false}
+      animate={{ y: tucked ? '-100%' : 0 }}
+      transition={slide}
+      // Keyboard users tabbing into a tucked-away header get it back.
+      onFocusCapture={() => setHidden(false)}
       className={cn(
         'sticky top-0 z-50 w-full border-b transition-[background-color,border-color] duration-300',
-        isScrolled
+        scrolled
           ? 'border-border bg-background/80 backdrop-blur-xs'
           : 'border-transparent bg-transparent',
       )}
     >
-      <TooltipProvider>
-        <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      {/* Equal flex-1 sides keep the nav centred however wide the two groups are. */}
+      <div className="container mx-auto flex h-16 max-w-7xl items-center gap-2 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-1 items-center justify-start">
           <SummaryDialog>
-            <Button variant="ghost">
-              <FileText className="mr-2 h-5 w-5" />
-              Summary
-            </Button>
+            <MotionButton
+              feel="pop"
+              variant="ghost"
+              className="size-11 gap-2 rounded-full p-0 md:w-auto md:px-3"
+            >
+              <FileText aria-hidden className="h-5 w-5" />
+              {/* The accessible name on phones (icon only), the visible label from md. */}
+              <span className="sr-only md:not-sr-only">Summary</span>
+            </MotionButton>
           </SummaryDialog>
+        </div>
 
-          <DesktopNav active={active} onNavigate={handleLinkClick} />
+        <DesktopNav active={active} onNavigate={handleLinkClick} />
 
-          <div className="flex items-center gap-2">
-            <ThemeToggleButton />
-            <div className="md:hidden">
-              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-6 w-6" />
-                    <span className="sr-only">Toggle Menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent aria-describedby={undefined}>
-                  <SheetTitle className="sr-only">Navigation</SheetTitle>
-                  <MobileNav active={active} onNavigate={handleLinkClick} />
-                </SheetContent>
-              </Sheet>
-            </div>
+        <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2">
+          {config.resume && (
+            <Magnetic strength={0.25} className="hidden md:inline-flex">
+              <ResumeLink href={config.resume} />
+            </Magnetic>
+          )}
+
+          <ThemeToggleButton onOpenChange={setIsMenuOpen} />
+
+          <div className="md:hidden">
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <MotionButton
+                  feel="pop"
+                  variant="ghost"
+                  size="icon"
+                  className="size-11 rounded-full"
+                >
+                  <Menu aria-hidden className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </MotionButton>
+              </SheetTrigger>
+              <SheetContent aria-describedby={undefined} className="overflow-y-auto">
+                <SheetTitle className="flex h-11 items-center pr-12 text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                  Menu
+                </SheetTitle>
+                <MobileNav active={active} onNavigate={handleLinkClick} />
+
+                <m.div
+                  initial="hidden"
+                  animate="show"
+                  variants={sheetFooter}
+                  className="mt-auto flex flex-col gap-3 border-t pt-6"
+                >
+                  <div className="flex gap-2">
+                    <SummaryDialog>
+                      <MotionButton
+                        variant="outline"
+                        className="h-12 flex-1 gap-2 rounded-full"
+                      >
+                        <FileText aria-hidden className="h-4 w-4" />
+                        Summary
+                      </MotionButton>
+                    </SummaryDialog>
+                    {config.resume && (
+                      <ResumeLink href={config.resume} className="h-12 flex-1" />
+                    )}
+                  </div>
+                  <ThemeSwitcherRow />
+                </m.div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
-      </TooltipProvider>
+      </div>
       <ScrollProgress />
-    </header>
+    </m.header>
   );
 }
