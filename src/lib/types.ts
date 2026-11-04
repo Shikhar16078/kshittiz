@@ -46,6 +46,11 @@ export type WorkExperience = {
   stack: string[];
   /** Company logo under /public. */
   logo?: string;
+  /**
+   * How the logo fills round/rounded frames: 'cover' (default) for full-bleed artwork, 'contain'
+   * for transparent marks (e.g. Microsoft's four squares) that must not be cropped.
+   */
+  logoFit?: 'cover' | 'contain';
   /** Key numbers from this role, shown as impact chips. */
   impact?: Stat[];
   role: string;

@@ -12,6 +12,7 @@ import {
 import { Building, CalendarDays, Check } from 'lucide-react';
 import type { Stat, WorkExperience } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { logoImageClass } from '@/lib/logo';
 import { LiveDot } from '@/components/live-dot';
 import { DURATION, EASE_IN, EASE_OUT, RISE } from '@/lib/motion';
 
@@ -103,7 +104,7 @@ export function CompanyLogo({
           alt=""
           width={size}
           height={size}
-          className="h-full w-full object-cover"
+          className={logoImageClass(job)}
         />
       ) : (
         <Building aria-hidden className="h-1/2 w-1/2 text-primary" />

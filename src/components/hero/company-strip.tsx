@@ -16,6 +16,7 @@ import { showExperience } from '@/lib/events';
 import { useFrameLoop } from '@/hooks/use-frame-loop';
 import { springSnappy } from '@/lib/motion';
 import { cn } from '@/lib/utils';
+import { logoImageClass } from '@/lib/logo';
 
 /** Each logo's turn in the light-up loop, and how long of it it's lit (ms). */
 const SLOT = 2200;
@@ -72,7 +73,7 @@ function Company({
             alt=""
             width={24}
             height={24}
-            className="absolute inset-0 h-full w-full object-cover opacity-60 grayscale"
+            className={cn('absolute inset-0 opacity-60 grayscale', logoImageClass(job))}
           />
           {/* Full-colour copy faded in over the grey one (opacity, never a filter animation). */}
           <m.span style={{ opacity: lit }} className="absolute inset-0">
@@ -81,7 +82,7 @@ function Company({
               alt=""
               width={24}
               height={24}
-              className="h-full w-full object-cover"
+              className={logoImageClass(job)}
             />
           </m.span>
         </span>

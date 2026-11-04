@@ -68,6 +68,7 @@ export const workExperience: WorkExperience[] = [
     stack: ['Azure Cosmos DB', 'Azure', 'Distributed Systems'],
     company: 'Microsoft',
     logo: '/images/microsoft.png',
+    logoFit: 'contain',
     impact: [
       { value: '4+ yrs', label: 'On Azure Cosmos DB' },
       { value: '2', label: 'Backup modes: periodic & continuous' },
