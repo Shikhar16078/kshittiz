@@ -45,7 +45,9 @@ function ChipGroup<T extends string>({
   onChange,
   count,
   layoutId,
+  className,
 }: {
+  className?: string;
   label: string;
   options: T[];
   value: T | null;
@@ -70,7 +72,10 @@ function ChipGroup<T extends string>({
     // Scrolls sideways on narrow screens rather than wrapping or overflowing the page.
     <div
       ref={scroller}
-      className="-mx-4 self-stretch overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className={cn(
+        '-mx-4 self-stretch overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        className
+      )}
     >
       <div
         role="group"
@@ -186,8 +191,11 @@ export function ProjectGrid({
 
   return (
     <LayoutGroup id="project-grid">
-      <div className="mb-8 flex flex-col items-center gap-3">
+      {/* One toolbar row on desktop: the type switch, then the tech chips scrolling sideways
+          with faded edges, so the filters take a single line above the grid. */}
+      <div className="mb-6 flex flex-col items-center gap-3 short:mb-4 lg:flex-row lg:gap-4">
         <ChipGroup
+          className="lg:mx-0 lg:shrink-0 lg:self-auto lg:px-0"
           label="Filter projects by category"
           options={CATEGORIES}
           value={category}
@@ -196,6 +204,7 @@ export function ProjectGrid({
           layoutId="project-filter-chip"
         />
         <ChipGroup
+          className="lg:mx-0 lg:min-w-0 lg:flex-1 lg:px-6 lg:[mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]"
           label="Filter projects by technology"
           options={techs}
           value={activeTech}
