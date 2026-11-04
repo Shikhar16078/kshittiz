@@ -292,11 +292,6 @@ function buildSkill(def: SkillDef): Skill {
 
 export const skills: Skill[] = defs.map(buildSkill);
 
-export const skillsByCategory = SKILL_CATEGORIES.map((category) => ({
-  category,
-  skills: skills.filter((s) => s.category === category),
-}));
-
 /** e.g. "45+": the count rounded down to a multiple of five. */
 export const skillCountLabel = `${Math.floor(skills.length / 5) * 5}+`;
 

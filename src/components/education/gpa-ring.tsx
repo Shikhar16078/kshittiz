@@ -7,7 +7,7 @@ import { DURATION, EASE_OUT, exitTransition } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 
 /** "GPA: 3.7/4.0" → { value: "3.7", scale: "4.0", ratio: 0.925 }. */
-export function parseGpa(gpa: string) {
+function parseGpa(gpa: string) {
   const match = gpa.match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
   if (!match) return null;
   const ratio = Number(match[1]) / Number(match[2]);

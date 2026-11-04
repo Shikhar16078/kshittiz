@@ -265,7 +265,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-6',
-    title: 'Resource conainers - Memory',
+    title: 'Resource containers - Memory',
     description:
       'Introduced a new abstraction called Resource containers for memory sharing in the Linux kernel using C. Tasks within the same container can share a pool of memory locations, while tasks in different containers cannot.',
     startDate: '2018',

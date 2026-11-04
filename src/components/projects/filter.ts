@@ -2,7 +2,7 @@ import type { Project } from '@/lib/types';
 import type { ProjectsFilterDetail } from '@/lib/events';
 
 /** A project's start year ("May 2018" → 2018), or null when it has none. */
-export function startYear(project: Pick<Project, 'startDate'>) {
+function startYear(project: Pick<Project, 'startDate'>) {
   const match = project.startDate.match(/\d{4}/);
   return match ? Number(match[0]) : null;
 }
@@ -35,7 +35,7 @@ export function canonical(name: string) {
  * language also matches its framework-style names ("Ruby" matches "Ruby on Rails", but "Java"
  * doesn't match "JavaScript").
  */
-export function usesTech(project: Pick<Project, 'techStack'>, tech: string) {
+function usesTech(project: Pick<Project, 'techStack'>, tech: string) {
   const want = canonical(tech);
   return project.techStack.some((item) => {
     const have = canonical(item);
