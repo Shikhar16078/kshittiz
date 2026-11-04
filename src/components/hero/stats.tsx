@@ -27,39 +27,48 @@ function kindOf(value: string): Kind | null {
 
 type VisualProps = { shown: boolean; delay: number; live: boolean };
 
-/** "~300 TB": dashes of data streaming along a track (each dash rides a full-width carrier). */
+/** "~300 TB": seconds for the dash to cross the track, and the pause before it goes again. */
+const LAP = 1.6;
+const LAP_PAUSE = 0.6;
+
+/**
+ * "~300 TB moved": a track with one dash of data sliding along it, loop after loop. The dash rides
+ * a carrier the width of the track; it's a quarter of the track long, so x: 0% → 126% takes it
+ * fully off the far end. Moves only on screen and never with reduced motion (then it rests
+ * mid-track).
+ */
 function Flow({ shown, delay, live }: VisualProps) {
-  const DASHES = 4;
-  const LAP = 2.4;
+  const moving = live && shown;
   return (
     <m.span
       data-reveal=""
       className="relative block h-1.5 w-24 origin-left overflow-hidden rounded-full bg-primary/15"
       initial={{ scaleX: 0 }}
-      animate={{ scaleX: shown ? 1 : 0, transition: { duration: 0.6, ease: EASE_OUT, delay: shown ? delay : 0 } }}
+      animate={{
+        scaleX: shown ? 1 : 0,
+        transition: shown ? { duration: 0.6, ease: EASE_OUT, delay } : { duration: 0.15 },
+      }}
     >
-      {Array.from({ length: DASHES }, (_, i) => (
-        <m.span
-          key={i}
-          className="absolute inset-0"
-          initial={{ x: `${(i / DASHES) * 100 + 12}%` }}
-          animate={
-            live && shown
-              ? {
-                  x: ['0%', '112%'],
-                  transition: {
-                    duration: LAP,
-                    ease: 'linear',
-                    repeat: Infinity,
-                    delay: delay + (i * LAP) / DASHES - LAP,
-                  },
-                }
-              : { x: `${(i / DASHES) * 100 + 12}%` }
-          }
-        >
-          <span className="absolute left-0 top-0 h-full w-3 -translate-x-full rounded-full bg-primary" />
-        </m.span>
-      ))}
+      <m.span
+        className="absolute inset-0"
+        initial={{ x: '60%' }}
+        animate={
+          moving
+            ? {
+                x: ['0%', '126%'],
+                transition: {
+                  duration: LAP,
+                  ease: [0.45, 0, 0.55, 1],
+                  repeat: Infinity,
+                  repeatDelay: LAP_PAUSE,
+                  delay: delay + 0.6,
+                },
+              }
+            : { x: '60%' }
+        }
+      >
+        <span className="absolute left-0 top-0 h-full w-6 -translate-x-full rounded-full bg-primary" />
+      </m.span>
     </m.span>
   );
 }
@@ -181,8 +190,9 @@ function StatVisual({ kind, value, ...props }: VisualProps & { kind: Kind; value
 /**
  * Key numbers under the hero: 2×2 on phones, one row of four from md up, separated by hairline
  * dividers. Items rise in one after another and the numbers count up (the year rolls like a
- * ticker); then each gets a small visual in turn: data streaming, a speed race, a timeline and
- * one dot per company. Loops run only on screen; with reduced motion the visuals are still.
+ * ticker); then each gets a small visual in turn: a timeline, one dot per company, a dash of
+ * data sliding along a track and a speed race. The dash loops only on screen and never with
+ * reduced motion.
  */
 export function HeroStats({ stats, className }: { stats: readonly Stat[]; className?: string }) {
   const [ref, shown] = useScrollReveal<HTMLDListElement>();
@@ -219,8 +229,9 @@ export function HeroStats({ stats, className }: { stats: readonly Stat[]; classN
                   ) : (
                     <CountUp value={stat.value} />
                   )}
-                  {kind && (
-                    <span aria-hidden className="mt-1.5 flex h-2.5 items-center">
+                  {/* Always reserved, so stats without a visual keep their labels in line. */}
+                  <span aria-hidden className="mt-1.5 flex h-2.5 items-center">
+                    {kind && (
                       <StatVisual
                         kind={kind}
                         value={stat.value}
@@ -228,8 +239,8 @@ export function HeroStats({ stats, className }: { stats: readonly Stat[]; classN
                         live={live}
                         delay={VISUAL_AT + i * VISUAL_GAP}
                       />
-                    </span>
-                  )}
+                    )}
+                  </span>
                 </dd>
               </RevealItem>
             );
