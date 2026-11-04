@@ -93,7 +93,8 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="dark"
           disableTransitionOnChange
-          themes={['light', 'dark', 'fresh']}
+          themes={['dark', 'light', 'rose', 'emerald', 'sapphire']}
+          enableSystem
         >
           <MotionProvider>{children}</MotionProvider>
         </ThemeProvider>

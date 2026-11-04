@@ -50,7 +50,7 @@ function Watermark({ src }: { src: string }) {
       className="pointer-events-none absolute -bottom-16 -right-14 h-64 w-64 md:h-72 md:w-72"
     >
       <m.div
-        className="h-full w-full opacity-[0.05] grayscale dark:opacity-[0.06] fresh:opacity-[0.07]"
+        className="h-full w-full opacity-[0.05] grayscale dark:opacity-[0.06]"
         animate={
           run
             ? {

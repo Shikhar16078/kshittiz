@@ -1,6 +1,6 @@
 import { flushSync } from 'react-dom';
 
-export const THEMES = ['light', 'dark', 'fresh'] as const;
+export const THEMES = ['dark', 'light', 'rose', 'emerald', 'sapphire'] as const;
 export type ThemeName = (typeof THEMES)[number];
 
 export type Origin = { x: number; y: number };

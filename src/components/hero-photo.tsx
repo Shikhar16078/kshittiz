@@ -81,7 +81,7 @@ export function HeroPhoto({ status }: { status?: string }) {
             variants={photo}
             className="relative z-[2] h-full w-full overflow-hidden rounded-full bg-background"
           >
-            {/* Café photo for light and dark, beach photo for fresh. CSS picks one, so the
+            {/* Café photo for every theme, beach photo for sapphire. CSS picks one, so the
                 first paint is right with no hydration flash; on a theme switch the circle
                 reveals the new photo along with the rest of the page. */}
             <Image
@@ -91,17 +91,17 @@ export function HeroPhoto({ status }: { status?: string }) {
               height={400}
               preload
               sizes="(min-width: 1024px) 336px, 256px"
-              className="h-full w-full object-cover fresh:hidden"
+              className="h-full w-full object-cover sapphire:hidden"
             />
             <Image
               src="/images/profile.jpg"
               alt="Profile photo"
               width={400}
               height={400}
-              // Eager even while hidden, so it's decoded before a switch to fresh captures it.
+              // Eager even while hidden, so it's decoded before a switch to sapphire captures it.
               loading="eager"
               sizes="(min-width: 1024px) 336px, 256px"
-              className="hidden h-full w-full object-cover fresh:block"
+              className="hidden h-full w-full object-cover sapphire:block"
             />
           </m.div>
           {status && (

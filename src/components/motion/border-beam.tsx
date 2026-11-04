@@ -37,9 +37,9 @@ const HALO_GRADIENT =
   'conic-gradient(from 0deg, transparent 0deg, hsl(var(--glow) / 0.12) 24deg, hsl(var(--glow) / 0.5) 58deg, hsl(var(--glow) / 0.6) 68deg, hsl(var(--glow) / 0.2) 80deg, transparent 96deg, transparent 360deg)';
 
 // The ring's core colour per theme. On light backgrounds a lighter core would wash out against
-// white, so light keeps the full-strength amber; dark and fresh get a near-white hot tip.
+// white, so light keeps the full-strength amber; the dark-family themes get a near-white hot tip.
 const THEME_VARS =
-  '[--beam-core:hsl(var(--primary))] dark:[--beam-core:color-mix(in_oklab,hsl(var(--primary)),white_62%)] fresh:[--beam-core:color-mix(in_oklab,hsl(var(--primary)),white_62%)] [--beam-halo:0.8] dark:[--beam-halo:0.75] fresh:[--beam-halo:0.8]';
+  '[--beam-core:hsl(var(--primary))] dark:[--beam-core:color-mix(in_oklab,hsl(var(--primary)),white_62%)] [--beam-halo:0.8] dark:[--beam-halo:0.75]';
 
 /**
  * A comet of light travelling around its parent's border, with a fainter counter-arc and a soft
