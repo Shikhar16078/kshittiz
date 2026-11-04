@@ -12,17 +12,12 @@ import {
   type Variants,
 } from 'motion/react';
 import { Tilt } from '@/components/motion/tilt';
-import { Orbit } from '@/components/hero/orbit';
 import { useFrameLoop } from '@/hooks/use-frame-loop';
 import { DURATION, EASE_OUT } from '@/lib/motion';
 
 // Ring speed in degrees per millisecond: one turn every 12s, about 4x faster while hovered.
 const BASE_SPEED = 360 / 12000;
 const HOVER_SPEED = BASE_SPEED * 4;
-// The orbiting icons share the ring's eased speed at a third of it (one lap every 36s, 9s hovered).
-const ORBIT_RATIO = 1 / 3;
-// Where the orbit rests (and stays with reduced motion): icons spread around both sides.
-const ORBIT_START = 20;
 
 const glow: Variants = {
   rest: { opacity: 0.55, transition: { duration: DURATION.base } },
@@ -42,8 +37,7 @@ const PING: Transition = { duration: 2, repeat: Infinity, ease: EASE_OUT };
 /**
  * Profile photo inside a slowly spinning ring with a soft glow, tilting toward the cursor on
  * mouse/trackpad devices. Under the mouse the ring eases up to speed and the glow brightens.
- * Tech icons orbit it on a tilted ellipse, passing in front of and behind the photo, and speed up
- * with the ring. The café photo (light/dark, preloaded) and the beach photo (fresh) are both in the first HTML
+ The café photo (every theme but sapphire, preloaded) and the beach photo (sapphire) are both in the first HTML
  * and CSS shows the one for the theme (good for LCP). With a `status`, a pulsing dot sits on the
  * ring and the text is shown in a chip under the photo, so it never depends on hover.
  */
@@ -52,14 +46,12 @@ export function HeroPhoto({ status }: { status?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref);
   const rotate = useMotionValue(0);
-  const orbit = useMotionValue(ORBIT_START);
   const speed = useSpring(BASE_SPEED, { stiffness: 40, damping: 20 });
   const live = !reduce && inView;
 
   useFrameLoop((delta) => {
     const step = speed.get() * delta;
     rotate.set((rotate.get() + step) % 360);
-    orbit.set((orbit.get() + step * ORBIT_RATIO) % 360);
   }, live);
 
   return (
@@ -112,7 +104,6 @@ export function HeroPhoto({ status }: { status?: string }) {
               className="hidden h-full w-full object-cover fresh:block"
             />
           </m.div>
-          <Orbit angle={orbit} />
           {status && (
             // On the ring at the 4:30 position (cos 45deg from the centre = 85.4%).
             <span

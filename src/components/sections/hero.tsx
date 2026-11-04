@@ -43,8 +43,8 @@ export function Hero({ config }: { config: SiteConfig }) {
 
   return (
     // The header above is sticky and 4rem tall, so the hero fills exactly the rest of the screen.
-    // overflow-x-clip: the orbit icons ride percentage-sized carriers that reach past the screen
-    // edge (no scroll container is created, unlike overflow: hidden).
+    // overflow-x-clip: the aurora and glow layers reach past the screen edge; clip them sideways
+    // (no scroll container is created, unlike overflow: hidden).
     <section
       id="about"
       className="relative isolate flex min-h-[calc(100svh-4rem)] flex-col overflow-x-clip"
@@ -60,8 +60,7 @@ export function Hero({ config }: { config: SiteConfig }) {
           >
             <m.div
               variants={photoSettle}
-              // Side padding leaves room for the orbiting icons, which swing wider than the photo.
-              className="flex justify-center lg:order-2 lg:px-12"
+              className="flex justify-center lg:order-2"
             >
               <HeroPhoto status={status} />
             </m.div>
