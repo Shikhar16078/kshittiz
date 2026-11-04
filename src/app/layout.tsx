@@ -6,6 +6,7 @@ import { MotionProvider } from '@/components/motion-provider';
 import { cn } from '@/lib/utils';
 import { personalData } from '@/lib/data';
 import { siteUrl } from '@/lib/site-url';
+import { THEME_BACKGROUND, THEMES } from '@/lib/themes';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -60,12 +61,10 @@ export const metadata: Metadata = {
   },
 };
 
-// Matches --background of the light and dark themes, so the browser chrome blends in.
+// The default theme's --background, so the browser chrome blends in on first paint (not per OS
+// scheme: the default is dark either way). ThemeColorSync updates it to the saved theme.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f9f8f6' },
-    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
-  ],
+  themeColor: THEME_BACKGROUND.dark,
   colorScheme: 'dark light',
 };
 
@@ -93,7 +92,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="dark"
           disableTransitionOnChange
-          themes={['dark', 'light', 'rose', 'emerald', 'sapphire']}
+          themes={[...THEMES]}
           enableSystem
         >
           <MotionProvider>{children}</MotionProvider>

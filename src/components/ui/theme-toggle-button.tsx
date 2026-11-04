@@ -30,20 +30,22 @@ import {
   type Origin,
   type ThemeName,
 } from "@/lib/theme-transition"
+import { THEME_BACKGROUND as BG } from "@/lib/themes"
 
 type Choice = ThemeName | "system"
 
 // Swatches preview *other* themes, so they can't use the current theme's tokens: these are the
-// fixed background / accent colours of each theme (keep in sync with globals.css).
+// fixed background (shared with theme-color) and accent colours of each theme (keep the accents
+// in sync with --primary in globals.css).
 const META: Record<
   Choice,
   { label: string; short: string; icon: LucideIcon; bg: string; accent: string }
 > = {
-  dark: { label: "Midnight Gold", short: "Gold", icon: Moon, bg: "#09090b", accent: "#ffc31a" },
-  light: { label: "Ivory", short: "Ivory", icon: Sun, bg: "#f8f7f6", accent: "#ef9a06" },
-  rose: { label: "Obsidian Rose", short: "Rose", icon: Flower2, bg: "#0c0909", accent: "#e3a38f" },
-  emerald: { label: "Emerald Noir", short: "Emerald", icon: Gem, bg: "#080c0a", accent: "#39c68a" },
-  sapphire: { label: "Sapphire", short: "Sapphire", icon: Waves, bg: "#0c1220", accent: "#bccfe4" },
+  dark: { label: "Midnight Gold", short: "Gold", icon: Moon, bg: BG.dark, accent: "#ffc31a" },
+  light: { label: "Ivory", short: "Ivory", icon: Sun, bg: BG.light, accent: "#ef9a06" },
+  rose: { label: "Obsidian Rose", short: "Rose", icon: Flower2, bg: BG.rose, accent: "#e3a38f" },
+  emerald: { label: "Emerald Noir", short: "Emerald", icon: Gem, bg: BG.emerald, accent: "#39c68a" },
+  sapphire: { label: "Sapphire", short: "Sapphire", icon: Waves, bg: BG.sapphire, accent: "#bccfe4" },
   system: { label: "System", short: "System", icon: Monitor, bg: "", accent: "" },
 }
 

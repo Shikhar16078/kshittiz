@@ -218,6 +218,14 @@
   html {
     -webkit-tap-highlight-color: transparent;
   }
+  /* Native scrollbars and controls match the theme from first paint. next-themes' inline
+     color-scheme only covers light and dark before hydration; the rest are dark-family. */
+  html:is(.dark, .rose, .emerald, .sapphire) {
+    color-scheme: dark;
+  }
+  html.light {
+    color-scheme: light;
+  }
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
