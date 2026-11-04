@@ -1,7 +1,7 @@
 'use client';
 
 import { m, type Variants } from 'motion/react';
-import { Badge } from '@/components/ui/badge';
+import { Badge, type BadgeProps } from '@/components/ui/badge';
 import { useScrollReveal } from '@/components/reveal';
 import {
   cappedInterval,
@@ -31,11 +31,16 @@ const badge: Variants = {
 export function BadgeRow({
   items,
   className,
+  variant = 'secondary',
+  margin,
 }: {
   items: string[];
   className?: string;
+  variant?: BadgeProps['variant'];
+  /** Reveal trigger margin, e.g. REVEAL_MARGIN_PAGE_END inside a dialog near the screen's foot. */
+  margin?: string;
 }) {
-  const [ref, shown] = useScrollReveal<HTMLDivElement>();
+  const [ref, shown] = useScrollReveal<HTMLDivElement>(margin);
   return (
     <m.div
       ref={ref}
@@ -52,7 +57,7 @@ export function BadgeRow({
           whileHover={{ y: -2, scale: 1.06, transition: springSnappy }}
           className="inline-flex"
         >
-          <Badge variant="secondary">{item}</Badge>
+          <Badge variant={variant}>{item}</Badge>
         </m.span>
       ))}
     </m.div>
