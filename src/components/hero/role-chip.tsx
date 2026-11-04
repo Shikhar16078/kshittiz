@@ -16,7 +16,7 @@ export function RoleChip({ className }: { className?: string }) {
   return (
     <h2
       className={cn(
-        'inline-flex max-w-full items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1.5 pl-3 pr-2 font-headline text-sm font-medium text-foreground/90 shadow-sm sm:gap-2.5 sm:text-base',
+        'inline-flex max-w-full items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1.5 pl-3.5 pr-1.5 font-headline text-sm font-medium text-foreground/90 shadow-sm sm:gap-2.5 sm:text-base',
         className,
       )}
     >
@@ -25,7 +25,7 @@ export function RoleChip({ className }: { className?: string }) {
       <span aria-hidden className="text-muted-foreground">
         ·
       </span>
-      <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-background/70 py-0.5 pl-1 pr-2.5">
+      <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-background/80 py-1 pl-2 pr-3.5 sm:py-1.5 sm:pl-2.5 sm:pr-4">
         {current.logo && (
           <Image
             src={current.logo}
