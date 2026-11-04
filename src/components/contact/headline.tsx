@@ -47,7 +47,7 @@ export function Headline({
               variants={word}
               className={
                 i >= words.length - accent
-                  ? 'inline-block text-primary'
+                  ? 'inline-block text-primary-ink'
                   : 'inline-block'
               }
             >

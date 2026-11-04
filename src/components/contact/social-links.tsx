@@ -56,7 +56,7 @@ export function SocialLinks({ links }: { links: SocialLink[] }) {
             </span>
             <m.span
               variants={arrow}
-              className="inline-flex text-muted-foreground transition-colors group-hover:text-primary"
+              className="inline-flex text-muted-foreground transition-colors group-hover:text-primary-ink"
             >
               <ArrowUpRight className="h-5 w-5" aria-hidden />
             </m.span>

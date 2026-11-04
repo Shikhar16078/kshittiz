@@ -138,7 +138,7 @@ export function FooterNav({ links }: { links: NavLink[] }) {
                 whileTap={{ scale: 0.96 }}
                 style={PILL}
                 className={cn(
-                  'group relative flex min-h-11 items-center gap-2 px-3 text-sm text-muted-foreground transition-colors hover:text-primary focus-visible:text-primary',
+                  'group relative flex min-h-11 items-center gap-2 px-3 text-sm text-muted-foreground transition-colors hover:text-primary-ink focus-visible:text-primary-ink',
                   focusRing,
                 )}
               >
@@ -209,7 +209,7 @@ function SocialItem({
       whileTap={{ scale: 0.92 }}
       style={PILL}
       className={cn(
-        'relative inline-flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:text-primary focus-visible:text-primary',
+        'relative inline-flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:text-primary-ink focus-visible:text-primary-ink',
         focusRing,
       )}
     >

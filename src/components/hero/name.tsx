@@ -65,7 +65,7 @@ export function HeroName({ name }: { name: string }) {
             <span
               className={cn(
                 'inline-block whitespace-nowrap',
-                w === words.length - 1 ? 'text-primary' : 'text-foreground',
+                w === words.length - 1 ? 'text-primary-ink' : 'text-foreground',
               )}
             >
               {[...word].map((char) => {

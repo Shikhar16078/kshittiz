@@ -236,7 +236,7 @@ function StackedCard({
             aria-hidden
             className="shrink-0 pt-1 font-headline text-xs tabular-nums tracking-widest text-muted-foreground"
           >
-            <span className="text-primary">{String(index + 1).padStart(2, '0')}</span> /{' '}
+            <span className="text-primary-ink">{String(index + 1).padStart(2, '0')}</span> /{' '}
             {String(total).padStart(2, '0')}
           </span>
         </header>

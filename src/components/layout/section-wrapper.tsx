@@ -64,7 +64,12 @@ function SectionGlow({
         )}
       >
         <m.div
-          className="h-full w-full rounded-full bg-[radial-gradient(circle,hsl(var(--glow)/0.10),transparent_65%)]"
+          className={cn(
+            'h-full w-full rounded-full',
+            side === 'left'
+              ? 'bg-[radial-gradient(circle,hsl(var(--glow)/0.10),transparent_65%)]'
+              : 'bg-[radial-gradient(circle,hsl(var(--glow-2)/0.09),transparent_65%)]'
+          )}
           animate={
             inView && !reduce
               ? { x: [0, 40, 0], y: [0, -30, 0], scale: [1, 1.08, 1] }
@@ -225,16 +230,16 @@ export function SectionTitle({
           aria-hidden
           data-reveal=""
           variants={eyebrow}
-          className="mb-4 flex items-center gap-3 font-body text-xs font-medium uppercase tracking-[0.25em] text-primary short:mb-2.5"
+          className="mb-4 flex items-center gap-3 font-body text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground short:mb-2.5"
         >
           <m.span
             variants={rule}
-            className="block h-px w-8 origin-left bg-primary/60"
+            className="block h-px w-8 origin-left bg-border"
           />
           {number}
           <m.span
             variants={rule}
-            className="block h-px w-8 origin-right bg-primary/60"
+            className="block h-px w-8 origin-right bg-border"
           />
         </m.span>
       )}
@@ -258,7 +263,7 @@ export function SectionTitle({
                   </WaveLetter>
                 ))}
                 {last && (
-                  <WaveLetter index={letterIndex++} wave={wave} className="text-primary">
+                  <WaveLetter index={letterIndex++} wave={wave} className="text-primary-ink">
                     .
                   </WaveLetter>
                 )}

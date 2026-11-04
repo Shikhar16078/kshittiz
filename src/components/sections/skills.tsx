@@ -50,11 +50,11 @@ export function Skills() {
 
       <Reveal className="flex flex-col items-center gap-3 text-center md:gap-4 short:gap-3">
         <p className="font-headline text-xl font-semibold tracking-tight md:text-2xl short:text-xl">
-          <span className="text-primary">
+          <span className="text-primary-ink">
             <CountUp value={skillCountLabel} />
           </span>{' '}
           tools across{' '}
-          <span className="text-primary">
+          <span className="text-primary-ink">
             <CountUp value={String(SKILL_CATEGORIES.length)} />
           </span>{' '}
           areas

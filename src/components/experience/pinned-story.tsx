@@ -357,7 +357,7 @@ function PinnedChapter({
           aria-hidden
           className="shrink-0 pt-1 font-headline text-sm tabular-nums tracking-widest text-muted-foreground"
         >
-          <span className="text-primary">{two}</span> / {of}
+          <span className="text-primary-ink">{two}</span> / {of}
         </m.span>
       </header>
 

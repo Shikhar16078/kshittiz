@@ -51,7 +51,7 @@ export function GpaRing({ gpa, className }: { gpa: string; className?: string })
           r={R}
           fill="none"
           strokeWidth={STROKE}
-          className="stroke-primary/15"
+          className="stroke-primary-ink/15"
         />
         <m.circle
           cx={SIZE / 2}
@@ -60,7 +60,7 @@ export function GpaRing({ gpa, className }: { gpa: string; className?: string })
           fill="none"
           strokeWidth={STROKE}
           strokeLinecap="round"
-          className="stroke-primary"
+          className="stroke-primary-ink"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: fill }}
           transition={

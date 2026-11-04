@@ -23,7 +23,7 @@ const BLOBS = [
   },
   {
     className:
-      '-right-[25%] top-[10%] size-[min(100vw,720px)] bg-[radial-gradient(circle,hsl(var(--primary)/0.16),transparent_62%)]',
+      '-right-[25%] top-[10%] size-[min(100vw,720px)] bg-[radial-gradient(circle,hsl(var(--glow-2)/0.14),transparent_62%)]',
     keyframes: { x: [0, -70, 20, 0], y: [0, 50, -30, 0], scale: [1, 0.94, 1.06, 1] },
     duration: 32,
   },

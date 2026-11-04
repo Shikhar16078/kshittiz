@@ -112,7 +112,7 @@ export function SkillDetail({
                       </span>
                       <ArrowUpRight
                         aria-hidden
-                        className="size-3.5 text-muted-foreground transition-colors group-hover:text-primary"
+                        className="size-3.5 text-muted-foreground transition-colors group-hover:text-primary-ink"
                       />
                     </m.button>
                   </li>

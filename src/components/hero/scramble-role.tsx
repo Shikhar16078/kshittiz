@@ -124,7 +124,7 @@ export function ScrambleRole({
         <span
           ref={text}
           data-scramble=""
-          className="absolute left-0 top-0 whitespace-nowrap font-semibold text-primary"
+          className="absolute left-0 top-0 whitespace-nowrap font-semibold text-primary-ink"
         >
           <span ref={locked}>{roles[0]}</span>
           <span ref={noise} className="opacity-55" />

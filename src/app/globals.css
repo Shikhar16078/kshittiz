@@ -35,6 +35,12 @@
   --color-primary-foreground: hsl(var(--primary-foreground));
 
   --color-secondary: hsl(var(--secondary));
+  /* Accent for text, links and thin strokes on the page background (AA contrast). */
+  --color-primary-ink: hsl(var(--primary-ink));
+  /* Decorative patterns (project covers): neutral in light, accent in dark themes. */
+  --color-pattern: hsl(var(--pattern));
+  /* Live / available / current: universally read as green. */
+  --color-success: hsl(var(--success));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
 
   --color-muted: hsl(var(--muted));
@@ -56,31 +62,35 @@
 }
 
 @layer base {
-  /* Light: warm paper with a deep amber accent (AA contrast for text and buttons). */
+  /* Light: soft neutral paper, white cards, real gold for fills, deep amber ink for text. */
   :root {
-    --background: 40 20% 97%;
-    --foreground: 30 10% 9%;
+    --background: 30 8% 97%;
+    --foreground: 30 10% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 30 10% 9%;
+    --card-foreground: 30 10% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 30 10% 9%;
-    --primary: 35 92% 33%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 38 18% 92%;
-    --secondary-foreground: 30 10% 15%;
-    --muted: 38 18% 92%;
-    --muted-foreground: 30 6% 36%;
-    --accent: 38 22% 90%;
+    --popover-foreground: 30 10% 8%;
+    --primary: 38 95% 48%;
+    --primary-foreground: 30 30% 8%;
+    --primary-ink: 32 90% 30%;
+    --secondary: 30 6% 93%;
+    --secondary-foreground: 30 10% 14%;
+    --muted: 30 6% 93%;
+    --muted-foreground: 30 5% 36%;
+    --accent: 30 8% 91%;
     --accent-foreground: 30 10% 12%;
     --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 35 14% 86%;
-    --input: 35 14% 86%;
-    --ring: 35 92% 33%;
+    --border: 30 6% 87%;
+    --input: 30 6% 87%;
+    --ring: 32 90% 30%;
     --radius: 0.75rem;
     --glow: 40 95% 55%;
     --grain-opacity: 0.03;
   }
+    --glow-2: 205 90% 60%;
+    --pattern: 30 6% 45%;
+    --success: 142 70% 32%;
 
   /* Dark (default): near-black with the signature gold. */
   .dark {
@@ -105,7 +115,11 @@
     --ring: 45 100% 55%;
     --glow: 45 100% 55%;
     --grain-opacity: 0.045;
+    --primary-ink: 45 100% 58%;
   }
+    --glow-2: 235 75% 62%;
+    --pattern: 45 100% 55%;
+    --success: 142 65% 48%;
 
   /* Fresh: deep navy with a teal accent. */
   .fresh {

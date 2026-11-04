@@ -107,7 +107,7 @@ export function CompanyLogo({
           className={logoImageClass(job)}
         />
       ) : (
-        <Building aria-hidden className="h-1/2 w-1/2 text-primary" />
+        <Building aria-hidden className="h-1/2 w-1/2 text-primary-ink" />
       )}
     </span>
   );
@@ -133,7 +133,7 @@ export function RoleMeta({
         <span className="sr-only"> at {job.company}</span>
       </h3>
       <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-muted-foreground">
-        <span aria-hidden className="font-medium text-primary">
+        <span aria-hidden className="font-medium text-primary-ink">
           {job.company}
         </span>
         <span aria-hidden>·</span>
@@ -203,7 +203,7 @@ export function Wins({
             aria-hidden
             variants={iconPop}
             {...revealAttr(!!reveal)}
-            className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary ring-1 ring-primary/30"
+            className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary-ink ring-1 ring-primary/30"
           >
             <Check className="size-3" strokeWidth={3} />
           </m.span>
@@ -335,7 +335,7 @@ function MetricVisual({ value, reveal }: { value: string; reveal?: boolean }) {
           fill="none"
           strokeWidth="3.5"
           strokeLinecap="round"
-          className="stroke-primary"
+          className="stroke-primary-ink"
           // pathLength isn't covered by reducedMotion="user", so the duration is dropped by hand.
           variants={{
             below: { pathLength: 0, transition: { duration: DURATION.fast } },
@@ -415,7 +415,7 @@ export function Metric({
         <div className="min-w-0 flex-1">
           <p
             className={cn(
-              'font-headline font-bold leading-none tracking-tight text-primary',
+              'font-headline font-bold leading-none tracking-tight text-primary-ink',
               valueClassName,
             )}
           >

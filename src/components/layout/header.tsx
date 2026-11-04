@@ -185,7 +185,7 @@ function DesktopNav({
               className={cn(
                 'relative flex h-10 items-center px-[11px] text-sm font-medium transition-colors',
                 focusRing,
-                isActive ? 'text-primary' : 'text-foreground/70 hover:text-foreground',
+                isActive ? 'text-primary-ink' : 'text-foreground/70 hover:text-foreground',
               )}
             >
               {/* One highlight that slides to whichever section is in view. */}
@@ -270,7 +270,7 @@ function MobileNav({
             className={cn(
               'relative flex min-h-12 items-center gap-3 rounded-xl px-3 text-lg font-medium transition-colors',
               focusRing,
-              isActive ? 'text-primary' : 'text-foreground/80 hover:text-foreground',
+              isActive ? 'text-primary-ink' : 'text-foreground/80 hover:text-foreground',
             )}
           >
             {isActive && (

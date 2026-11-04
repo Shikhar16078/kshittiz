@@ -234,7 +234,7 @@ export function ProjectGrid({
                     onClick={c.clear}
                     aria-label={`Clear filter: ${c.label}`}
                     className={cn(
-                      'inline-flex h-11 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 pl-4 pr-3 text-sm font-medium text-primary transition-colors hover:bg-primary/20',
+                      'inline-flex h-11 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 pl-4 pr-3 text-sm font-medium text-primary-ink transition-colors hover:bg-primary/20',
                       focusRing
                     )}
                   >

@@ -36,7 +36,7 @@ export function SummaryDialog({ children }: { children: React.ReactNode }) {
           <m.div variants={fadeUp} className="flex items-center gap-4 pr-10">
             <span
               aria-hidden
-              className="flex size-12 shrink-0 items-center justify-center rounded-full border border-primary/40 bg-primary/10 font-headline text-lg font-bold text-primary"
+              className="flex size-12 shrink-0 items-center justify-center rounded-full border border-primary/40 bg-primary/10 font-headline text-lg font-bold text-primary-ink"
             >
               {initials}
             </span>

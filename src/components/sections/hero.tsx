@@ -91,7 +91,7 @@ export function Hero({ config }: { config: SiteConfig }) {
                 />
                 {location && (
                   <p className="flex items-center gap-1.5 text-[0.9375rem] text-muted-foreground">
-                    <MapPin aria-hidden className="h-4 w-4 shrink-0 text-primary" />
+                    <MapPin aria-hidden className="h-4 w-4 shrink-0 text-primary-ink" />
                     {location}
                   </p>
                 )}
@@ -167,7 +167,7 @@ export function Hero({ config }: { config: SiteConfig }) {
                           whileHover={{ scale: 1.1, transition: springSnappy }}
                           whileTap={{ scale: 0.95 }}
                           className={cn(
-                            'inline-flex h-12 w-12 items-center justify-center rounded-full text-foreground/70 outline-hidden transition-colors hover:bg-accent hover:text-primary',
+                            'inline-flex h-12 w-12 items-center justify-center rounded-full text-foreground/70 outline-hidden transition-colors hover:bg-accent hover:text-primary-ink',
                             focusRing,
                           )}
                         >

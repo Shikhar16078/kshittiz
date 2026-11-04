@@ -43,7 +43,7 @@ const patterns: Pattern[] = [
         dots.push(<circle key={`${x}-${y}`} cx={x} cy={y} r={r1(r)} />);
       }
     }
-    return <g className="fill-primary/35">{dots}</g>;
+    return <g className="fill-pattern/35">{dots}</g>;
   },
   // Parallel diagonal lines.
   (rand) => {
@@ -55,7 +55,7 @@ const patterns: Pattern[] = [
     }
     return (
       <g
-        className="stroke-primary/25"
+        className="stroke-pattern/25"
         strokeWidth={1.5}
         transform={`rotate(${angle} ${W / 2} ${H / 2})`}
       >
@@ -72,7 +72,7 @@ const patterns: Pattern[] = [
       rings.push(<circle key={r} cx={cx} cy={cy} r={r} />);
     }
     return (
-      <g className="fill-none stroke-primary/25" strokeWidth={1.25}>
+      <g className="fill-none stroke-pattern/25" strokeWidth={1.25}>
         {rings}
       </g>
     );
@@ -93,7 +93,7 @@ const patterns: Pattern[] = [
               width={size - 4}
               height={size - 4}
               rx={3}
-              className={v > 0.93 ? 'fill-primary/45' : 'fill-primary/15'}
+              className={v > 0.93 ? 'fill-pattern/45' : 'fill-pattern/15'}
             />
           );
         }
@@ -101,7 +101,7 @@ const patterns: Pattern[] = [
     }
     return (
       <>
-        <g className="stroke-primary/10" strokeWidth={1}>
+        <g className="stroke-pattern/10" strokeWidth={1}>
           {Array.from({ length: W / size }, (_, i) => (
             <line key={`v${i}`} x1={i * size} y1={0} x2={i * size} y2={H} />
           ))}
@@ -130,7 +130,7 @@ const patterns: Pattern[] = [
       waves.push(<path key={i} d={d} />);
     }
     return (
-      <g className="fill-none stroke-primary/30" strokeWidth={1.5}>
+      <g className="fill-none stroke-pattern/30" strokeWidth={1.5}>
         {waves}
       </g>
     );
@@ -176,7 +176,7 @@ export function ProjectCover({
       // Radial gradients, not blur filters: cheap to composite.
       background: [
         `radial-gradient(circle at ${g1[0]}% ${g1[1]}%, hsl(var(--glow) / 0.28), transparent 55%)`,
-        `radial-gradient(circle at ${g2[0]}% ${g2[1]}%, hsl(var(--primary) / 0.16), transparent 60%)`,
+        `radial-gradient(circle at ${g2[0]}% ${g2[1]}%, hsl(var(--glow-2) / 0.16), transparent 60%)`,
         'hsl(var(--secondary))',
       ].join(', '),
     };
@@ -256,7 +256,7 @@ export function ProjectCover({
       </div>
       {/* Fades the art into the card so the title below reads cleanly. */}
       <div className="absolute inset-0 bg-[linear-gradient(to_top,hsl(var(--card)/0.9),transparent_65%)]" />
-      <span className="absolute bottom-3 left-4 flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-card/80 text-primary shadow-sm">
+      <span className="absolute bottom-3 left-4 flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-card/80 text-primary-ink shadow-sm">
         <Icon className="h-5 w-5" />
       </span>
       <span className="absolute right-4 top-3 font-headline text-3xl font-bold tabular-nums text-foreground/15">

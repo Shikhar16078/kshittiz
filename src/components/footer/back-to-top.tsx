@@ -31,7 +31,7 @@ export function BackToTop() {
       initial="rest"
       whileHover="hover"
       whileTap={{ scale: 0.92 }}
-      className="group relative inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group relative inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:text-primary-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <svg
         aria-hidden
@@ -53,7 +53,7 @@ export function BackToTop() {
           fill="none"
           strokeWidth="2"
           strokeLinecap="round"
-          className="stroke-primary"
+          className="stroke-primary-ink"
           style={{ pathLength: progress }}
         />
       </svg>

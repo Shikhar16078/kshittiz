@@ -93,7 +93,7 @@ export function CopyEmail({
             'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs transition-colors',
             copied
               ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary text-secondary-foreground group-hover:text-primary',
+              : 'bg-secondary text-secondary-foreground group-hover:text-primary-ink',
           )}
         >
           <span className="relative inline-flex h-4 w-4">

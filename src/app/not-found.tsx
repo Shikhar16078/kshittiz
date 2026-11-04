@@ -44,7 +44,7 @@ export default function NotFound() {
                 key={i}
                 data-reveal=""
                 variants={digit}
-                className={i === 1 ? 'inline-block text-primary' : 'inline-block'}
+                className={i === 1 ? 'inline-block text-primary-ink' : 'inline-block'}
               >
                 {d}
               </m.span>

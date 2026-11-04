@@ -112,7 +112,7 @@ export function DegreeCard({ edu }: { edu: EducationEntry }) {
               />
             ) : (
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-                <GraduationCap aria-hidden className="h-6 w-6 text-primary" />
+                <GraduationCap aria-hidden className="h-6 w-6 text-primary-ink" />
               </span>
             )}
             <div className="min-w-0">
@@ -155,7 +155,7 @@ export function DegreeCard({ edu }: { edu: EducationEntry }) {
                   data-reveal=""
                   variants={chip}
                   whileHover={{ y: -3, scale: 1.04, transition: springSnappy }}
-                  className="rounded-full border border-primary/20 bg-secondary/70 px-3 py-1.5 text-sm leading-5 text-secondary-foreground transition-colors hover:border-primary/50"
+                  className="rounded-full border border-border bg-secondary/70 px-3 py-1.5 text-sm leading-5 text-secondary-foreground transition-colors hover:border-foreground/25"
                 >
                   {course}
                 </m.li>
@@ -167,7 +167,7 @@ export function DegreeCard({ edu }: { edu: EducationEntry }) {
             <div className="mt-auto border-t pt-3">
               <MotionButton
                 variant="ghost"
-                className="-ml-3 h-11 rounded-full px-3 text-primary hover:bg-primary/10 hover:text-primary"
+                className="-ml-3 h-11 rounded-full px-3 text-primary-ink hover:bg-primary/10 hover:text-primary-ink"
                 onClick={() => showProjects({ years })}
               >
                 Projects from this degree

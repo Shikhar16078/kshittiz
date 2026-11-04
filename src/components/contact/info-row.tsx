@@ -42,14 +42,14 @@ export function InfoRow({
         </Item>
       )}
       {location && (
-        <Item icon={<MapPin className="h-4 w-4 text-primary" aria-hidden />}>
+        <Item icon={<MapPin className="h-4 w-4 text-primary-ink" aria-hidden />}>
           <span className="sr-only">Based in </span>
           {location}
         </Item>
       )}
       {/* Rendered after mount only, so the server and client markup always match. */}
       {timezone && time && (
-        <Item icon={<Clock className="h-4 w-4 text-primary" aria-hidden />}>
+        <Item icon={<Clock className="h-4 w-4 text-primary-ink" aria-hidden />}>
           <span className="sr-only">Local time: </span>
           <time className="tabular-nums">{time}</time>
         </Item>

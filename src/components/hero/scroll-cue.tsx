@@ -49,7 +49,7 @@ export function ScrollCue({
       aria-label="Scroll to experience"
       style={{ opacity, pointerEvents }}
       className={cn(
-        'group flex flex-col items-center gap-1.5 rounded-full p-2 text-muted-foreground transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [@media(max-height:700px)]:hidden',
+        'group flex flex-col items-center gap-1.5 rounded-full p-2 text-muted-foreground transition-colors hover:text-primary-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [@media(max-height:700px)]:hidden',
         className,
       )}
     >

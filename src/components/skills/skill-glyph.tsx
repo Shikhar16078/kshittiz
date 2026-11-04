@@ -31,7 +31,7 @@ export function SkillGlyph({
         aria-hidden
         style={{ containerType: 'size' }}
         className={cn(
-          'flex shrink-0 items-center justify-center font-headline font-bold leading-none tracking-tight text-primary',
+          'flex shrink-0 items-center justify-center font-headline font-bold leading-none tracking-tight text-primary-ink',
           className
         )}
       >
@@ -41,5 +41,5 @@ export function SkillGlyph({
     );
   }
   const Icon = icon.icon;
-  return <Icon aria-hidden className={cn('shrink-0 text-primary', className)} />;
+  return <Icon aria-hidden className={cn('shrink-0 text-primary-ink', className)} />;
 }
