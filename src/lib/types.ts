@@ -16,7 +16,6 @@ export type PersonalData = {
   name: string;
   title: string;
   bio: string[];
-  image: string;
   contact: {
     email: string;
     social: SocialLink[];
@@ -25,7 +24,7 @@ export type PersonalData = {
 
 export type WorkExperience = {
   company: string;
-  role:string;
+  role: string;
   startDate: string;
   endDate: string;
   accomplishments: string[];
@@ -49,7 +48,5 @@ export type Project = {
   endDate: string;
   type: 'Academic' | 'Personal';
   techStack: string[];
-  liveDemoUrl: string;
   githubUrl: string;
-  image: string;
 };

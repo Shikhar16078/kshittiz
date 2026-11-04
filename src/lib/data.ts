@@ -4,7 +4,6 @@ import {
   GraduationCap,
   Home,
   Mail,
-  Wrench,
   BrainCircuit,
 } from 'lucide-react';
 import { Github, Linkedin, Youtube } from '@/components/icons/brand-icons';
@@ -23,7 +22,6 @@ export const personalData: PersonalData = {
     'A seasoned software engineer with a passion for building scalable and efficient solutions. Experienced in cloud technologies, distributed systems, and backend development, with a proven track record of delivering high-quality software at top tech companies.',
     'I thrive in collaborative environments, continuously learning and applying new technologies to solve complex problems and drive innovation.',
   ],
-  image: 'profile-photo',
   contact: {
     email: 'kshittiz.k@gmail.com',
     social: [
@@ -151,9 +149,7 @@ export const projects: Project[] = [
     endDate: '2019',
     type: 'Academic',
     techStack: ['Python', 'scikit-learn', 'Hierarchical Clustering', 'K-Means'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-1',
   },
   {
     id: 'project-2',
@@ -164,9 +160,7 @@ export const projects: Project[] = [
     endDate: '2019',
     type: 'Academic',
     techStack: ['Python', 'Pandas', 'StatsModels', 'Time Series Analysis'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-2',
   },
   {
     id: 'project-3',
@@ -177,9 +171,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['Python', 'StatsModels', 'Regression Analysis', 'Matplotlib'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-3',
   },
   {
     id: 'project-4',
@@ -190,9 +182,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['Java', 'Flowdroid', 'Static Analysis', 'Android Security'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-4',
   },
   {
     id: 'project-5',
@@ -203,9 +193,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['Ruby', 'RSpec', 'Testing', 'Rails'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-5',
   },
   {
     id: 'project-6',
@@ -216,9 +204,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['C', 'Linux Kernel', 'Operating Systems', 'Memory Management'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-6',
   },
   {
     id: 'project-7',
@@ -229,9 +215,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['C', 'Linux Kernel', 'Operating Systems', 'CPU Scheduling'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-7',
   },
   {
     id: 'project-8',
@@ -242,9 +226,7 @@ export const projects: Project[] = [
     endDate: '2014',
     type: 'Academic',
     techStack: ['Java', 'Swing', 'MVC', 'SQL', 'JDBC'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-8',
   },
   {
     id: 'project-9',
@@ -261,9 +243,7 @@ export const projects: Project[] = [
       'Gnuplot',
       'Network Security',
     ],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-9',
   },
   {
     id: 'project-10',
@@ -274,9 +254,7 @@ export const projects: Project[] = [
     endDate: '2014',
     type: 'Personal',
     techStack: ['Python', 'AES-GCM', 'Cryptography', 'pycryptodome'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-10',
   },
   {
     id: 'project-11',
@@ -287,9 +265,7 @@ export const projects: Project[] = [
     endDate: '2016',
     type: 'Personal',
     techStack: ['Node.js', 'Slack API', 'Trello', 'Agile'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-11',
   },
   {
     id: 'project-12',
@@ -300,9 +276,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Personal',
     techStack: ['Ruby on Rails', 'Bootstrap', 'MVC', 'SQL'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-12',
   },
 ];
 
