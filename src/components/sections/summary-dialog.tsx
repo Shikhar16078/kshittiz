@@ -20,9 +20,7 @@ export function SummaryDialog({ children }: { children: React.ReactNode }) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle className="font-headline text-2xl">
-            Summary
-          </DialogTitle>
+          <DialogTitle className="font-headline text-2xl">Summary</DialogTitle>
           <DialogDescription>A brief overview of my profile.</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">

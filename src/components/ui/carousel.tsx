@@ -5,9 +5,11 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
+import { m } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { springSnappy } from "@/lib/motion"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
@@ -59,14 +61,14 @@ const Carousel = React.forwardRef<
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
         axis: orientation === "horizontal" ? "x" : "y",
       },
-      plugins
+      plugins,
     )
     const [canScrollPrev, setCanScrollPrev] = React.useState(false)
     const [canScrollNext, setCanScrollNext] = React.useState(false)
@@ -81,10 +83,13 @@ const Carousel = React.forwardRef<
       setCanScrollPrev(api.canScrollPrev())
       setCanScrollNext(api.canScrollNext())
     }, [])
-    
-    const scrollTo = React.useCallback((index: number) => {
-      api?.scrollTo(index)
-    }, [api]);
+
+    const scrollTo = React.useCallback(
+      (index: number) => {
+        api?.scrollTo(index)
+      },
+      [api],
+    )
 
     const scrollPrev = React.useCallback(() => {
       api?.scrollPrev()
@@ -104,7 +109,7 @@ const Carousel = React.forwardRef<
           scrollNext()
         }
       },
-      [scrollPrev, scrollNext]
+      [scrollPrev, scrollNext],
     )
 
     React.useEffect(() => {
@@ -113,9 +118,9 @@ const Carousel = React.forwardRef<
       }
 
       onSelect(api)
-      setScrollSnaps(api.scrollSnapList());
+      setScrollSnaps(api.scrollSnapList())
       api.on("reInit", onSelect)
-      api.on("reInit", (api) => setScrollSnaps(api.scrollSnapList()));
+      api.on("reInit", (api) => setScrollSnaps(api.scrollSnapList()))
       api.on("select", onSelect)
 
       return () => {
@@ -160,7 +165,7 @@ const Carousel = React.forwardRef<
         </div>
       </CarouselContext.Provider>
     )
-  }
+  },
 )
 Carousel.displayName = "Carousel"
 
@@ -171,13 +176,13 @@ const CarouselContent = React.forwardRef<
   const { carouselRef, orientation } = useCarousel()
 
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    <div ref={carouselRef} className="overflow-hidden" data-reveal-clip="">
       <div
         ref={ref}
         className={cn(
           "flex",
           orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
-          className
+          className,
         )}
         {...props}
       />
@@ -200,7 +205,7 @@ const CarouselItem = React.forwardRef<
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
         orientation === "horizontal" ? "pl-4" : "pt-4",
-        className
+        className,
       )}
       {...props}
     />
@@ -254,12 +259,11 @@ const CarouselNext = React.forwardRef<
 })
 CarouselNext.displayName = "CarouselNext"
 
-
 const CarouselPagination = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
-  const { selectedIndex, scrollSnaps, scrollTo } = useCarousel();
+  const { selectedIndex, scrollSnaps, scrollTo } = useCarousel()
 
   return (
     <div
@@ -268,23 +272,28 @@ const CarouselPagination = React.forwardRef<
       {...props}
     >
       {scrollSnaps.map((_, index) => (
-        <Button
+        <button
           key={index}
-          variant="outline"
-          size="icon"
-          className={cn(
-            'h-2 w-2 rounded-full p-0',
-            index === selectedIndex ? 'bg-primary' : 'bg-primary/20'
-          )}
+          type="button"
+          className="relative h-2 w-2 rounded-full bg-primary/20 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background"
+          aria-current={index === selectedIndex}
           onClick={() => scrollTo(index)}
         >
+          {/* One indicator that slides between dots as the carousel moves. */}
+          {index === selectedIndex && (
+            <m.span
+              layoutId="carousel-dot"
+              transition={springSnappy}
+              className="absolute inset-0 rounded-full bg-primary"
+            />
+          )}
           <span className="sr-only">Go to slide {index + 1}</span>
-        </Button>
+        </button>
       ))}
     </div>
-  );
-});
-CarouselPagination.displayName = 'CarouselPagination';
+  )
+})
+CarouselPagination.displayName = "CarouselPagination"
 
 export {
   type CarouselApi,
@@ -293,5 +302,5 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-  CarouselPagination
+  CarouselPagination,
 }

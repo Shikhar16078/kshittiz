@@ -1,9 +1,14 @@
-
 'use client';
 
 import { useState } from 'react';
+import { m } from 'motion/react';
+import { CalendarDays, ChevronDown, FolderKanban } from 'lucide-react';
 import { projects } from '@/lib/data';
-import { SectionWrapper, SectionTitle } from '../layout/section-wrapper';
+import type { Project } from '@/lib/types';
+import {
+  SectionWrapper,
+  SectionTitle,
+} from '@/components/layout/section-wrapper';
 import {
   Card,
   CardContent,
@@ -14,12 +19,6 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  ChevronDown,
-  ChevronUp,
-  CalendarDays,
-  FolderKanban,
-} from 'lucide-react';
 import { Github } from '@/components/icons/brand-icons';
 import {
   Carousel,
@@ -29,127 +28,129 @@ import {
   CarouselPrevious,
   CarouselPagination,
 } from '@/components/ui/carousel';
-import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { AnimatedSection } from '../ui/animated-section';
+import { Reveal, RevealGroup, RevealItem } from '@/components/reveal';
+import { HoverLift } from '@/components/hover-lift';
+import { BadgeRow } from '@/components/badge-row';
+import { DURATION, EASE_OUT, springSnappy } from '@/lib/motion';
+
+const COLLAPSED_COUNT = 6;
+
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <HoverLift>
+      <Card className="flex h-full flex-col">
+        <CardHeader>
+          <CardTitle className="font-headline text-xl">
+            {project.title}
+          </CardTitle>
+          <div className="flex flex-wrap justify-between gap-2">
+            <Badge
+              variant="outline"
+              className="flex w-fit items-center gap-2 border-primary/50 text-primary"
+            >
+              <CalendarDays className="h-4 w-4" />
+              <span>
+                {project.startDate} - {project.endDate}
+              </span>
+            </Badge>
+            <Badge
+              variant="outline"
+              className="flex w-fit items-center gap-2 border-primary/50 text-primary"
+            >
+              <FolderKanban className="h-4 w-4" />
+              <span>{project.type} Project</span>
+            </Badge>
+          </div>
+          <CardDescription>{project.description}</CardDescription>
+        </CardHeader>
+        <CardContent className="grow">
+          <BadgeRow items={project.techStack} />
+        </CardContent>
+        <CardFooter className="flex gap-4">
+          {project.githubUrl && project.githubUrl !== '#' && (
+            <Button asChild variant="outline">
+              <m.a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ y: -2, transition: springSnappy }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <Github /> Source
+              </m.a>
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    </HoverLift>
+  );
+}
 
 export function Projects() {
   const [showAll, setShowAll] = useState(false);
   const isMobile = useIsMobile();
 
-  const ProjectCard = ({ project }: { project: (typeof projects)[0] }) => (
-    <Card className="flex h-full flex-col transition-transform duration-300 ease-in-out hover:-translate-y-1">
-      <CardHeader>
-        <CardTitle className="font-headline text-xl">{project.title}</CardTitle>
-        <div className="flex flex-wrap gap-2 justify-between">
-          <Badge
-            variant="outline"
-            className="flex w-fit items-center gap-2 border-primary/50 text-primary"
-          >
-            <CalendarDays className="h-4 w-4" />
-            <span>
-              {project.startDate} - {project.endDate}
-            </span>
-          </Badge>
-          <Badge
-            variant="outline"
-            className="flex w-fit items-center gap-2 border-primary/50 text-primary"
-          >
-            <FolderKanban className="h-4 w-4" />
-            <span>{project.type} Project</span>
-          </Badge>
-        </div>
-        <CardDescription>{project.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grow">
-        <div className="flex flex-wrap gap-2">
-          {project.techStack.map((tech) => (
-            <Badge key={tech} variant="secondary">
-              {tech}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-      <CardFooter className="flex gap-4">
-        {project.githubUrl && project.githubUrl !== '#' && (
-          <Button asChild variant="outline">
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github /> Source
-            </a>
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
-  );
-
-  const displayedProjects = showAll ? projects : projects.slice(0, 6);
+  // Phones always get the grid; "Show All" expands it there as well as on desktop.
+  const displayed = showAll ? projects : projects.slice(0, COLLAPSED_COUNT);
 
   return (
     <SectionWrapper id="projects">
-      <AnimatedSection>
-        <SectionTitle>Projects</SectionTitle>
-      </AnimatedSection>
+      <SectionTitle>Projects</SectionTitle>
 
-      <div className={cn('relative transition-all duration-500 ease-in-out')}>
-        {isMobile || showAll ? (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayedProjects.map((project, index) => (
-              <AnimatedSection key={project.id} delay={index * 100}>
-                <ProjectCard project={project} />
-              </AnimatedSection>
-            ))}
-          </div>
-        ) : (
+      {isMobile || showAll ? (
+        <RevealGroup className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {displayed.map((project) => (
+            <RevealItem key={project.id} className="h-full">
+              <ProjectCard project={project} />
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      ) : (
+        // Slides stagger in by on-screen position; slides outside the viewport are skipped.
+        <RevealGroup>
           <Carousel
-            opts={{
-              align: 'start',
-            }}
-            className="w-full max-w-6xl mx-auto"
+            opts={{ align: 'start' }}
+            className="mx-auto w-full max-w-6xl"
           >
             <CarouselContent>
               {projects.map((project) => (
                 <CarouselItem
                   key={project.id}
-                  className="basis-full md:basis-1/2 flex"
+                  className="flex basis-full md:basis-1/2"
                 >
-                  <AnimatedSection variant="zoom" className="w-full">
-                    <div className="p-1 h-full">
-                      <ProjectCard project={project} />
-                    </div>
-                  </AnimatedSection>
+                  <RevealItem className="h-full w-full p-1">
+                    <ProjectCard project={project} />
+                  </RevealItem>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="mt-8 flex justify-center items-center gap-4">
+            <div className="mt-8 flex items-center justify-center gap-4">
               <CarouselPrevious />
               <CarouselPagination />
               <CarouselNext />
             </div>
           </Carousel>
-        )}
-      </div>
+        </RevealGroup>
+      )}
 
-      {!isMobile && projects.length > 6 && (
-        <div className="mt-8 flex justify-center">
-          <AnimatedSection>
-            <Button
-              variant="ghost"
-              onClick={() => setShowAll(!showAll)}
-              className="group"
+      {projects.length > COLLAPSED_COUNT && (
+        <Reveal className="mt-8 flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => setShowAll((v) => !v)}
+            aria-expanded={showAll}
+          >
+            {showAll ? 'Show Less' : 'Show All'}
+            <m.span
+              animate={{ rotate: showAll ? 180 : 0 }}
+              transition={{ duration: DURATION.base, ease: EASE_OUT }}
+              className="ml-2 inline-flex"
             >
-              {showAll ? 'Show Less' : 'Show All'}
-              {showAll ? (
-                <ChevronUp className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />
-              ) : (
-                <ChevronDown className="ml-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
-              )}
-            </Button>
-          </AnimatedSection>
-        </div>
+              <ChevronDown className="h-4 w-4" />
+            </m.span>
+          </Button>
+        </Reveal>
       )}
     </SectionWrapper>
   );

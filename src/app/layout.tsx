@@ -1,7 +1,24 @@
 import type { Metadata } from 'next';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
+import { MotionProvider } from '@/components/motion-provider';
+import { cn } from '@/lib/utils';
+
+// Self-hosted at build time: no runtime requests to Google Fonts.
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Kshittiz Kumar',
@@ -17,22 +34,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn(inter.variable, spaceGrotesk.variable)}
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
+        {/* Reveals start hidden and are animated in by JS; without JS, just show them. */}
+        <noscript>
+          <style>
+            {'[data-reveal]{opacity:1!important;transform:none!important}'}
+          </style>
+        </noscript>
       </head>
       <body className="font-body bg-background text-foreground antialiased">
         <ThemeProvider
@@ -41,8 +54,7 @@ export default function RootLayout({
           disableTransitionOnChange
           themes={['light', 'dark', 'fresh']}
         >
-          {children}
-          <Toaster />
+          <MotionProvider>{children}</MotionProvider>
         </ThemeProvider>
       </body>
     </html>

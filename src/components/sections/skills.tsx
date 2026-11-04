@@ -1,17 +1,10 @@
-
 'use client';
 
 import {
   SectionWrapper,
   SectionTitle,
 } from '@/components/layout/section-wrapper';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Code,
   Server,
@@ -20,7 +13,9 @@ import {
   GitMerge,
   type LucideIcon,
 } from 'lucide-react';
-import { AnimatedSection } from '../ui/animated-section';
+import { RevealGroup, RevealItem } from '@/components/reveal';
+import { HoverLift } from '@/components/hover-lift';
+import { BadgeRow } from '@/components/badge-row';
 
 type SkillCategory = {
   title: string;
@@ -71,14 +66,7 @@ const skillCategories: SkillCategory[] = [
   {
     title: 'Databases',
     icon: Database,
-    skills: [
-      'PostgreSQL',
-      'MongoDB',
-      'Redis',
-      'SQL',
-      'NoSQL',
-      'Snowflake',
-    ],
+    skills: ['PostgreSQL', 'MongoDB', 'Redis', 'SQL', 'NoSQL', 'Snowflake'],
   },
   {
     title: 'General',
@@ -98,34 +86,28 @@ const skillCategories: SkillCategory[] = [
 export function Skills() {
   return (
     <SectionWrapper id="skills">
-      <AnimatedSection>
-        <SectionTitle>Skills</SectionTitle>
-      </AnimatedSection>
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {skillCategories.map((category, index) => (
-          <AnimatedSection key={category.title} delay={index * 100}>
-            <Card className="flex flex-col transition-transform duration-300 ease-in-out hover:-translate-y-1 h-full">
-              <CardHeader>
-                <div className="flex items-center gap-4">
-                  <category.icon className="h-8 w-8 text-primary" />
-                  <CardTitle className="font-headline text-xl">
-                    {category.title}
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {category.skills.map((skill) => (
-                    <Badge key={skill} variant="secondary">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </AnimatedSection>
+      <SectionTitle>Skills</SectionTitle>
+      <RevealGroup className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {skillCategories.map((category) => (
+          <RevealItem key={category.title} className="h-full">
+            <HoverLift>
+              <Card className="flex h-full flex-col">
+                <CardHeader>
+                  <div className="flex items-center gap-4">
+                    <category.icon className="h-8 w-8 text-primary" />
+                    <CardTitle className="font-headline text-xl">
+                      {category.title}
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <BadgeRow items={category.skills} />
+                </CardContent>
+              </Card>
+            </HoverLift>
+          </RevealItem>
         ))}
-      </div>
+      </RevealGroup>
     </SectionWrapper>
   );
 }
