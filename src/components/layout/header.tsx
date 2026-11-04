@@ -90,6 +90,25 @@ function useHideOnScroll() {
   // top stays framed under it (scroll-margin-top: 4rem) instead of leaving a 64 px gap. It's
   // released by the next real user input, not a timer, since smooth scrolls vary in length.
   const pinned = useRef(false);
+  // True while a region marked `data-keep-header` (the pinned Experience story) is on screen:
+  // tucking the nav away there made the long pinned track feel like a trap with no way out.
+  const keep = useRef(false);
+
+  useEffect(() => {
+    const regions = document.querySelectorAll('[data-keep-header]');
+    if (!regions.length) return;
+    const visible = new Set<Element>();
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) visible.add(e.target);
+        else visible.delete(e.target);
+      }
+      keep.current = visible.size > 0;
+      if (keep.current) setHidden(false);
+    });
+    regions.forEach((r) => io.observe(r));
+    return () => io.disconnect();
+  }, []);
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     setScrolled(y > 10);
@@ -99,7 +118,7 @@ function useHideOnScroll() {
     travel.current =
       Math.sign(delta) === Math.sign(travel.current) ? travel.current + delta : delta;
 
-    if (y < TOP_ZONE || pinned.current) setHidden(false);
+    if (y < TOP_ZONE || pinned.current || keep.current) setHidden(false);
     else if (travel.current > HIDE_AFTER) setHidden(true);
     else if (travel.current < -SHOW_AFTER) setHidden(false);
   });

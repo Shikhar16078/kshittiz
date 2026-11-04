@@ -132,6 +132,7 @@ export function PinnedStory({ jobs }: { jobs: WorkExperience[] }) {
   return (
     <div
       ref={track}
+      data-keep-header=""
       className="relative hidden lg:block"
       // One screen per role, plus the opening frame.
       style={{ height: `calc((100svh - 4rem) * ${n + 1})` }}
