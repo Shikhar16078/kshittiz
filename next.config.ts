@@ -8,7 +8,9 @@ const isDev = process.env.NODE_ENV !== 'production';
 // would force dynamic rendering). External scripts are still blocked.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+  // In development the Vercel Analytics/Speed Insights debug scripts load from their CDN;
+  // in production they're served from this origin (/_vercel/*).
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval' https://va.vercel-scripts.com" : ''}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",

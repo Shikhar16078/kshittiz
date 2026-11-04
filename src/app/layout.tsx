@@ -1,9 +1,13 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { MotionProvider } from '@/components/motion-provider';
 import { cn } from '@/lib/utils';
+import { personalData } from '@/lib/data';
+import { siteUrl } from '@/lib/site-url';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 // Self-hosted at build time: no runtime requests to Google Fonts.
 const inter = Inter({
@@ -20,12 +24,49 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
 });
 
+const [currentRole, ...previous] = personalData.title.split(' | ');
+const siteTitle = `${personalData.name} — ${currentRole.replace(/ at .*$/, '')}`;
+const siteDescription = `${personalData.name} is a ${currentRole}${
+  previous.length ? `, previously at ${previous.join(' and ')}` : ''
+}. ${personalData.bio[0].split('. ')[0]}.`;
+
 export const metadata: Metadata = {
-  title: 'Kshittiz Kumar',
-  description: 'A modern portfolio for a top-notch software developer.',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteTitle,
+    template: `%s — ${personalData.name}`,
+  },
+  description: siteDescription,
+  applicationName: personalData.name,
+  authors: [{ name: personalData.name, url: siteUrl }],
+  creator: personalData.name,
+  alternates: { canonical: '/' },
+  // The image comes from app/opengraph-image.tsx; Twitter falls back to it.
+  openGraph: {
+    type: 'profile',
+    url: '/',
+    siteName: personalData.name,
+    title: siteTitle,
+    description: siteDescription,
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteTitle,
+    description: siteDescription,
+  },
   icons: {
     icon: '/images/app_icon.png',
   },
+};
+
+// Matches --background of the light and dark themes, so the browser chrome blends in.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f9f8f6' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+  ],
+  colorScheme: 'dark light',
 };
 
 export default function RootLayout({
@@ -56,6 +97,9 @@ export default function RootLayout({
         >
           <MotionProvider>{children}</MotionProvider>
         </ThemeProvider>
+        {/* Vercel Web Analytics and Speed Insights: reported only from Vercel deployments. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

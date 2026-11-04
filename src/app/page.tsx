@@ -6,18 +6,24 @@ import { Experience } from '@/components/sections/experience';
 import { Education } from '@/components/sections/education';
 import { Projects } from '@/components/sections/projects';
 import { Contact } from '@/components/sections/contact';
+import { getSiteConfig } from '@/lib/site-config';
 
-export default function Home() {
+// Prerendered, and rebuilt in the background at most once a minute so Global Config edits
+// (status, location, résumé, timezone) show up without a deploy.
+export const revalidate = 60;
+
+export default async function Home() {
+  const config = await getSiteConfig();
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="flex min-h-screen flex-col">
+      <Header config={config} />
       <main className="grow">
-        <Hero />
+        <Hero config={config} />
         <Experience />
         <Skills />
         <Projects />
         <Education />
-        <Contact />
+        <Contact config={config} />
       </main>
       <Footer />
     </div>
