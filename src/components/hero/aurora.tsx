@@ -37,11 +37,11 @@ const BLOBS = [
 
 type Controls = NonNullable<ReturnType<typeof animate>>;
 
-const LIGHT = 520;
+const LIGHT = 320;
 
 // Dot grid: period of the pattern (px), the cursor spotlight's diameter, and one drift lap (s).
 const DOT = 24;
-const SPOT = 360;
+const SPOT = 220;
 const DRIFT = 48;
 const DOTS = `radial-gradient(circle, hsl(var(--foreground) / 0.16) 1px, transparent 1.6px)`;
 const LIT_DOTS = `radial-gradient(circle, hsl(var(--primary)) 1.25px, transparent 1.9px)`;
