@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react';
 import { m, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useFinePointer } from '@/hooks/use-fine-pointer';
 
 // Share of the scroll distance the content drifts down by, and where the fade ends (px).
 const DRIFT = 0.3;
@@ -16,15 +17,11 @@ export function HeroScrollAway({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
   const still = useRef(true);
 
+  const fine = useFinePointer();
+  // Read by the transform below on each scroll change, so a ref (no re-subscription needed).
   useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const update = () => {
-      still.current = !!reduce || !fine.matches;
-    };
-    update();
-    fine.addEventListener('change', update);
-    return () => fine.removeEventListener('change', update);
-  }, [reduce]);
+    still.current = !!reduce || !fine;
+  }, [reduce, fine]);
 
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, (v) =>
