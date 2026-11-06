@@ -4,12 +4,9 @@ import {
   GraduationCap,
   Home,
   Mail,
-  Wrench,
-  Github,
-  Linkedin,
-  Youtube,
   BrainCircuit,
 } from 'lucide-react';
+import { Github, Linkedin, Youtube } from '@/components/icons/brand-icons';
 import type {
   PersonalData,
   WorkExperience,
@@ -21,11 +18,21 @@ import type {
 export const personalData: PersonalData = {
   name: 'Kshittiz Kumar',
   title: 'Senior Software Engineer at Microsoft | FactSet | PayPal',
+  roles: ['Distributed systems', 'Cloud data services', 'Backend engineering'],
+  // DRAFT copy (derived from the experience below) — confirm wording with Kshittiz.
+  tagline:
+    'I build the backup and restore systems that keep Azure Cosmos DB data safe, and I have been shipping backend software since 2015.',
   bio: [
     'A seasoned software engineer with a passion for building scalable and efficient solutions. Experienced in cloud technologies, distributed systems, and backend development, with a proven track record of delivering high-quality software at top tech companies.',
     'I thrive in collaborative environments, continuously learning and applying new technologies to solve complex problems and drive innovation.',
   ],
-  image: 'profile-photo',
+  // Derived from the experience entries below; edit freely.
+  stats: [
+    { value: '2015', label: 'Shipping software since' },
+    { value: '4', label: 'Companies' },
+    { value: '~300 TB', label: 'Moved to Snowflake' },
+    { value: '8×', label: 'Faster C++ → Java rewrite' },
+  ],
   contact: {
     email: 'kshittiz.k@gmail.com',
     social: [
@@ -41,7 +48,7 @@ export const personalData: PersonalData = {
       },
       {
         name: 'YouTube',
-        url: 'https://www.youtube.com/@LeetCodeLearning',
+        url: 'https://www.youtube.com/@kshittizk',
         icon: Youtube,
       },
     ],
@@ -50,7 +57,22 @@ export const personalData: PersonalData = {
 
 export const workExperience: WorkExperience[] = [
   {
+    id: 'microsoft',
+    // DRAFT impact copy — confirm with Kshittiz (no metrics given for this role yet).
+    headline: 'Keeping Azure Cosmos DB data recoverable at cloud scale.',
+    wins: [
+      'Designs backup and restore for partitioned collections and databases',
+      'Optimises restores for large, multi-partition environments with minimal downtime',
+      'Automates recovery and manages restore permissions at scale',
+    ],
+    stack: ['Azure Cosmos DB', 'Azure', 'Distributed Systems'],
     company: 'Microsoft',
+    logo: '/images/microsoft.png',
+    logoFit: 'contain',
+    impact: [
+      { value: '4+ yrs', label: 'On Azure Cosmos DB' },
+      { value: '2', label: 'Backup modes: periodic & continuous' },
+    ],
     role: 'Senior Software Engineer',
     startDate: 'Jan 2022',
     endDate: 'Present',
@@ -62,7 +84,22 @@ export const workExperience: WorkExperience[] = [
     ],
   },
   {
+    id: 'factset',
+    // DRAFT impact copy — confirm with Kshittiz.
+    headline: 'Moved ~300 TB into Snowflake and made a core service 8× faster.',
+    wins: [
+      'Built the SQL pipelines that loaded ~300 TB into Snowflake',
+      'Automated ~0.5 TB of daily ingest with AWS Lambda and Snowpipe',
+      'Rewrote a C++ service in Java for an 8× speed-up',
+    ],
+    stack: ['Snowflake', 'SQL', 'Python', 'Go', 'Java', 'Redis', 'AWS Lambda', 'MapReduce', 'OpenTracing'],
     company: 'FactSet',
+    logo: '/images/factset.jpeg',
+    impact: [
+      { value: '~300 TB', label: 'Uploaded to Snowflake' },
+      { value: '~0.5 TB', label: 'Daily automated ingest' },
+      { value: '8×', label: 'Faster after C++ → Java rewrite' },
+    ],
     role: 'Software Engineer I - III',
     startDate: 'July 2019',
     endDate: 'Jan 2022',
@@ -80,7 +117,18 @@ export const workExperience: WorkExperience[] = [
     ],
   },
   {
+    id: 'paypal',
+    // DRAFT impact copy — confirm with Kshittiz.
+    headline: 'Brought real-time distributed tracing to PayPal services.',
+    wins: [
+      'Built an OpenTracing tracer bridging the central logging system',
+      'Enabled real-time performance monitoring across services',
+      'Reached 85% code coverage with JUnit',
+    ],
+    stack: ['Java', 'Spring Boot', 'OpenTracing', 'JUnit', 'Jenkins'],
     company: 'PayPal',
+    logo: '/images/paypal.jpeg',
+    impact: [{ value: '85%', label: 'Code coverage with JUnit' }],
     role: 'Software Engineer Intern',
     startDate: 'May 2018',
     endDate: 'Aug 2018',
@@ -91,7 +139,21 @@ export const workExperience: WorkExperience[] = [
     ],
   },
   {
+    id: 'aricent',
+    // DRAFT impact copy — confirm with Kshittiz.
+    headline: 'Shipped the Java EE back end of a network management system.',
+    wins: [
+      'Part of the Team Excellence Award winning group (Oct 2016)',
+      'Built RESTful services, EJBs, schema and JPA data access',
+      'Held ~95% unit test coverage with TestNG and Mockito',
+    ],
+    stack: ['Java', 'Java EE', 'JPA', 'REST APIs', 'TestNG', 'Mockito'],
     company: 'Aricent',
+    logo: '/images/aricent.jpeg',
+    impact: [
+      { value: '~95%', label: 'Unit test coverage' },
+      { value: '2016', label: 'Team Excellence Award' },
+    ],
     role: 'Software Engineer',
     startDate: 'Oct 2015',
     endDate: 'May 2017',
@@ -109,6 +171,7 @@ export const workExperience: WorkExperience[] = [
 export const education: Education[] = [
   {
     institution: 'North Carolina State University',
+    logo: '/images/ncstate.jpg',
     degree: 'Master of Computer Science',
     startDate: '2017',
     endDate: '2019',
@@ -126,6 +189,7 @@ export const education: Education[] = [
   },
   {
     institution: 'Guru Gobind Singh Indraprastha University',
+    logo: '/images/ggsipu.jpg',
     degree: 'Bachelor of Technology in Computer Science & Engineering',
     startDate: '2011',
     endDate: '2015',
@@ -153,9 +217,7 @@ export const projects: Project[] = [
     endDate: '2019',
     type: 'Academic',
     techStack: ['Python', 'scikit-learn', 'Hierarchical Clustering', 'K-Means'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-1',
   },
   {
     id: 'project-2',
@@ -166,9 +228,7 @@ export const projects: Project[] = [
     endDate: '2019',
     type: 'Academic',
     techStack: ['Python', 'Pandas', 'StatsModels', 'Time Series Analysis'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-2',
   },
   {
     id: 'project-3',
@@ -179,9 +239,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['Python', 'StatsModels', 'Regression Analysis', 'Matplotlib'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-3',
   },
   {
     id: 'project-4',
@@ -192,9 +250,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['Java', 'Flowdroid', 'Static Analysis', 'Android Security'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-4',
   },
   {
     id: 'project-5',
@@ -205,22 +261,18 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['Ruby', 'RSpec', 'Testing', 'Rails'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-5',
   },
   {
     id: 'project-6',
-    title: 'Resource conainers - Memory',
+    title: 'Resource containers - Memory',
     description:
       'Introduced a new abstraction called Resource containers for memory sharing in the Linux kernel using C. Tasks within the same container can share a pool of memory locations, while tasks in different containers cannot.',
     startDate: '2018',
     endDate: '2018',
     type: 'Academic',
     techStack: ['C', 'Linux Kernel', 'Operating Systems', 'Memory Management'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-6',
   },
   {
     id: 'project-7',
@@ -231,9 +283,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Academic',
     techStack: ['C', 'Linux Kernel', 'Operating Systems', 'CPU Scheduling'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-7',
   },
   {
     id: 'project-8',
@@ -244,9 +294,7 @@ export const projects: Project[] = [
     endDate: '2014',
     type: 'Academic',
     techStack: ['Java', 'Swing', 'MVC', 'SQL', 'JDBC'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-8',
   },
   {
     id: 'project-9',
@@ -263,9 +311,7 @@ export const projects: Project[] = [
       'Gnuplot',
       'Network Security',
     ],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-9',
   },
   {
     id: 'project-10',
@@ -276,9 +322,7 @@ export const projects: Project[] = [
     endDate: '2014',
     type: 'Personal',
     techStack: ['Python', 'AES-GCM', 'Cryptography', 'pycryptodome'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-10',
   },
   {
     id: 'project-11',
@@ -289,9 +333,7 @@ export const projects: Project[] = [
     endDate: '2016',
     type: 'Personal',
     techStack: ['Node.js', 'Slack API', 'Trello', 'Agile'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-11',
   },
   {
     id: 'project-12',
@@ -302,9 +344,7 @@ export const projects: Project[] = [
     endDate: '2018',
     type: 'Personal',
     techStack: ['Ruby on Rails', 'Bootstrap', 'MVC', 'SQL'],
-    liveDemoUrl: '#',
     githubUrl: '#',
-    image: 'project-12',
   },
 ];
 

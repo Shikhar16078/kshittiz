@@ -1,26 +1,14 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { ChevronDown } from 'lucide-react';
 import { projects } from '@/lib/data';
-import { SectionWrapper, SectionTitle } from '../layout/section-wrapper';
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Github,
-  ChevronDown,
-  ChevronUp,
-  CalendarDays,
-  FolderKanban,
-} from 'lucide-react';
+  SectionWrapper,
+  SectionTitle,
+} from '@/components/layout/section-wrapper';
+import { MotionButton } from '@/components/ui/motion-button';
 import {
   Carousel,
   CarouselContent,
@@ -28,129 +16,171 @@ import {
   CarouselNext,
   CarouselPrevious,
   CarouselPagination,
+  useCarousel,
 } from '@/components/ui/carousel';
-import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { AnimatedSection } from '../ui/animated-section';
+import type { Project } from '@/lib/types';
+import { Reveal, RevealGroup, RevealItem } from '@/components/reveal';
+import { ProjectCard } from '@/components/projects/project-card';
+import { ProjectGrid } from '@/components/projects/project-grid';
+import { DURATION, EASE_IN, EASE_OUT, REVEAL_MARGIN_PAGE_END } from '@/lib/motion';
+import { PROJECTS_FILTER, type ProjectsFilterDetail } from '@/lib/events';
+
+const AUTOPLAY_MS = 5000;
+/** The sticky header's height: a filter jump lands the section just below it. */
+const HEADER_PX = 64;
+
+/**
+ * The slides, inside the Carousel so they can read which one is current: that one (centred, as
+ * the carousel aligns to the centre) carries the BorderBeam. Re-renders only when the slide
+ * changes, never while it moves.
+ */
+function Slides({
+  projects,
+  onOpenChange,
+}: {
+  projects: Project[];
+  onOpenChange: (open: boolean) => void;
+}) {
+  const { selectedIndex } = useCarousel();
+  return (
+    <CarouselContent className="py-2">
+      {projects.map((project, index) => (
+        <CarouselItem
+          key={project.id}
+          className="flex basis-[88%] sm:basis-[70%] md:basis-1/2 lg:basis-1/3"
+          aria-label={`${index + 1} of ${projects.length}`}
+        >
+          <RevealItem className="h-full w-full">
+            <ProjectCard
+              project={project}
+              index={index}
+              featured={index === selectedIndex}
+              onOpenChange={onOpenChange}
+            />
+          </RevealItem>
+        </CarouselItem>
+      ))}
+    </CarouselContent>
+  );
+}
+
+const view = {
+  initial: { opacity: 0, y: 12 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: DURATION.base, ease: EASE_OUT },
+  },
+  exit: { opacity: 0, y: 12, transition: { duration: DURATION.fast, ease: EASE_IN } },
+};
 
 export function Projects() {
   const [showAll, setShowAll] = useState(false);
-  const isMobile = useIsMobile();
+  // Tech / year filter set from other sections (or the grid's tech chips).
+  const [filter, setFilter] = useState<ProjectsFilterDetail>({});
+  // Open dialogs (one per card, so focus returns to the card that opened it) hold autoplay.
+  const [openDialogs, setOpenDialogs] = useState(0);
+  const anchor = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
 
-  const ProjectCard = ({ project }: { project: (typeof projects)[0] }) => (
-    <Card className="flex h-full flex-col transition-transform duration-300 ease-in-out hover:-translate-y-1">
-      <CardHeader>
-        <CardTitle className="font-headline text-xl">{project.title}</CardTitle>
-        <div className="flex flex-wrap gap-2 justify-between">
-          <Badge
-            variant="outline"
-            className="flex w-fit items-center gap-2 border-primary/50 text-primary"
-          >
-            <CalendarDays className="h-4 w-4" />
-            <span>
-              {project.startDate} - {project.endDate}
-            </span>
-          </Badge>
-          <Badge
-            variant="outline"
-            className="flex w-fit items-center gap-2 border-primary/50 text-primary"
-          >
-            <FolderKanban className="h-4 w-4" />
-            <span>{project.type} Project</span>
-          </Badge>
-        </div>
-        <CardDescription>{project.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <div className="flex flex-wrap gap-2">
-          {project.techStack.map((tech) => (
-            <Badge key={tech} variant="secondary">
-              {tech}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-      <CardFooter className="flex gap-4">
-        {project.githubUrl && project.githubUrl !== '#' && (
-          <Button asChild variant="outline">
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github /> Source
-            </a>
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
-  );
+  // Other sections (Skills, Education) ask for a filtered grid: switch to it, apply the filter
+  // and bring the section into view under the header.
+  useEffect(() => {
+    const onFilter = (e: Event) => {
+      const { tech, years } = (e as CustomEvent<ProjectsFilterDetail>).detail ?? {};
+      setFilter({ tech: tech || undefined, years });
+      setShowAll(true);
+      const section = document.getElementById('projects');
+      if (!section) return;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({
+        top: section.getBoundingClientRect().top + window.scrollY - HEADER_PX,
+        behavior: reduced ? 'auto' : 'smooth',
+      });
+    };
+    window.addEventListener(PROJECTS_FILTER, onFilter);
+    return () => window.removeEventListener(PROJECTS_FILTER, onFilter);
+  }, []);
 
-  const displayedProjects = showAll ? projects : projects.slice(0, 6);
+  const toggle = () => {
+    const next = !showAll;
+    setShowAll(next);
+    if (!next) setFilter({});
+    // Collapsing a long grid from below would leave the viewer far down the page.
+    const top = anchor.current?.getBoundingClientRect().top ?? 0;
+    if (!next && top < 0) {
+      anchor.current?.scrollIntoView({
+        behavior: reduce ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    }
+  };
 
   return (
-    <SectionWrapper id="projects">
-      <AnimatedSection>
-        <SectionTitle>Projects</SectionTitle>
-      </AnimatedSection>
+    <SectionWrapper id="projects" glow="left">
+      <SectionTitle number="03">Projects</SectionTitle>
 
-      <div className={cn('relative transition-all duration-500 ease-in-out')}>
-        {isMobile || showAll ? (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayedProjects.map((project, index) => (
-              <AnimatedSection key={project.id} delay={index * 100}>
-                <ProjectCard project={project} />
-              </AnimatedSection>
-            ))}
-          </div>
-        ) : (
-          <Carousel
-            opts={{
-              align: 'start',
-            }}
-            className="w-full max-w-6xl mx-auto"
-          >
-            <CarouselContent>
-              {projects.map((project) => (
-                <CarouselItem
-                  key={project.id}
-                  className="basis-full md:basis-1/2 flex"
+      <div ref={anchor} className="scroll-mt-24">
+        <AnimatePresence mode="wait" initial={false}>
+          {showAll ? (
+            <m.div key="grid" {...view}>
+              <ProjectGrid
+                projects={projects}
+                filter={filter}
+                onFilterChange={setFilter}
+              />
+            </m.div>
+          ) : (
+            <m.div key="carousel" {...view}>
+              {/* Slides stagger in by on-screen position; slides outside the viewport are skipped. */}
+              <RevealGroup>
+                <Carousel
+                  opts={{ align: 'center', loop: true }}
+                  autoplay={AUTOPLAY_MS}
+                  paused={openDialogs > 0}
+                  depth
+                  aria-label="Projects"
+                  className="w-full"
                 >
-                  <AnimatedSection variant="zoom" className="w-full">
-                    <div className="p-1 h-full">
-                      <ProjectCard project={project} />
-                    </div>
-                  </AnimatedSection>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="mt-8 flex justify-center items-center gap-4">
-              <CarouselPrevious />
-              <CarouselPagination />
-              <CarouselNext />
-            </div>
-          </Carousel>
-        )}
+                  <Slides
+                    projects={projects}
+                    onOpenChange={(open) =>
+                      setOpenDialogs((n) => Math.max(0, n + (open ? 1 : -1)))
+                    }
+                  />
+                  <div className="mt-8 flex items-center justify-center gap-3 short:mt-3">
+                    <CarouselPrevious />
+                    <CarouselPagination />
+                    <CarouselNext />
+                  </div>
+                </Carousel>
+              </RevealGroup>
+            </m.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {!isMobile && projects.length > 6 && (
-        <div className="mt-8 flex justify-center">
-          <AnimatedSection>
-            <Button
-              variant="ghost"
-              onClick={() => setShowAll(!showAll)}
-              className="group"
-            >
-              {showAll ? 'Show Less' : 'Show All'}
-              {showAll ? (
-                <ChevronUp className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />
-              ) : (
-                <ChevronDown className="ml-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
-              )}
-            </Button>
-          </AnimatedSection>
-        </div>
-      )}
+      {/* Last thing in a screen-sized section, so it can sit below the usual trigger line. */}
+      <Reveal
+        margin={REVEAL_MARGIN_PAGE_END}
+        className="mt-8 flex justify-center short:mt-1"
+      >
+        <MotionButton
+          variant="ghost"
+          className="h-11 rounded-full px-5"
+          onClick={toggle}
+          aria-expanded={showAll}
+        >
+          {showAll ? 'Show Less' : `Show All ${projects.length}`}
+          <m.span
+            animate={{ rotate: showAll ? 180 : 0 }}
+            transition={{ duration: DURATION.base, ease: EASE_OUT }}
+            className="inline-flex"
+          >
+            <ChevronDown className="h-4 w-4" />
+          </m.span>
+        </MotionButton>
+      </Reveal>
     </SectionWrapper>
   );
 }

@@ -1,179 +1,283 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+/* Theme-change View Transition (owned by the theme toggle). */
+@import './view-transitions.css';
+
+/* `dark:` covers every dark-family theme; `sapphire:` is only for the one sapphire-specific tweak
+   (its hero photo). */
+@custom-variant dark (&:is(.dark *, .rose *, .emerald *, .sapphire *));
+@custom-variant sapphire (&:is(.sapphire *));
+
+/*
+  Height-aware spacing for desktop-sized screens, so each section fits one screen below the
+  64px header. `short` covers laptops (e.g. 1440×900, 1512×741, 1280×720); `shorter` the
+  smallest of them. Phones (below md) keep their natural scrolling layout.
+*/
+@custom-variant short (@media (min-width: 48rem) and (max-height: 940px));
+@custom-variant shorter (@media (min-width: 48rem) and (max-height: 780px));
+
+/* Font variables are injected by next/font in src/app/layout.tsx */
+@theme inline {
+  --font-body: var(--font-inter), sans-serif;
+  --font-headline: var(--font-space-grotesk), sans-serif;
+}
+
+@theme {
+  --breakpoint-2xl: 1400px;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  /* Accent for text, links and thin strokes on the page background (AA contrast). */
+  --color-primary-ink: hsl(var(--primary-ink));
+  /* Decorative patterns (project covers): neutral in light, accent in dark themes. */
+  --color-pattern: hsl(var(--pattern));
+  /* Live / available / current: universally read as green. */
+  --color-success: hsl(var(--success));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
 
 @layer base {
+  /* Light: soft neutral paper, white cards, real gold for fills, deep amber ink for text. */
   :root {
-    --background: 210 20% 96%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 30 8% 97%;
+    --foreground: 30 10% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 30 10% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 200 95% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 20% 94%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 20% 94%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 20% 92%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 200 95% 55%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --glow: 215 20% 65%;
+    --popover-foreground: 30 10% 8%;
+    --primary: 38 95% 48%;
+    --primary-foreground: 30 30% 8%;
+    --primary-ink: 32 90% 30%;
+    --secondary: 30 6% 93%;
+    --secondary-foreground: 30 10% 14%;
+    --muted: 30 6% 93%;
+    --muted-foreground: 30 5% 36%;
+    --accent: 30 8% 91%;
+    --accent-foreground: 30 10% 12%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 6% 87%;
+    --input: 30 6% 87%;
+    --ring: 32 90% 30%;
+    --radius: 0.75rem;
+    --glow: 40 95% 55%;
+    --glow-2: 205 90% 60%;
+    --pattern: 30 6% 45%;
+    --success: 142 70% 32%;
+    --grain-opacity: 0.03;
   }
 
+  /* Dark (default): near-black with the signature gold. */
   .dark {
-    --background: 240 10% 4%; /* Nearly black */
-    --foreground: 210 40% 98%; /* Light gray */
-    --card: 240 10% 6%; /* Slightly lighter charcoal */
-    --card-foreground: 210 40% 98%;
-    --popover: 240 10% 4%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 45 100% 55%; /* Brighter, more vibrant gold */
+    --background: 240 10% 4%;
+    --foreground: 40 20% 96%;
+    --card: 240 8% 7.5%;
+    --card-foreground: 40 20% 96%;
+    --popover: 240 8% 7%;
+    --popover-foreground: 40 20% 96%;
+    --primary: 45 100% 55%;
     --primary-foreground: 240 10% 4%;
-    --secondary: 240 10% 10%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 240 10% 10%;
-    --muted-foreground: 210 40% 80%;
-    --accent: 240 10% 12%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
+    --secondary: 240 6% 12%;
+    --secondary-foreground: 40 20% 96%;
+    --muted: 240 6% 12%;
+    --muted-foreground: 230 8% 70%;
+    --accent: 240 6% 13%;
+    --accent-foreground: 40 20% 96%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 16%;
+    --input: 240 6% 16%;
     --ring: 45 100% 55%;
-    --chart-1: 45 100% 55%;
-    --chart-2: 25 95% 60%;
-    --chart-3: 0 84% 60%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --primary-ink: 45 100% 58%;
     --glow: 45 100% 55%;
+    --glow-2: 235 75% 62%;
+    --pattern: 45 100% 55%;
+    --success: 142 65% 48%;
+    --grain-opacity: 0.045;
   }
-  
-  .fresh {
-    --background: 227 18% 18%;
-    --foreground: 210 20% 98%;
-    --card: 226 15% 22%;
-    --card-foreground: 210 20% 98%;
-    --popover: 227 18% 18%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 200 95% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 225 15% 25%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 225 15% 25%;
-    --muted-foreground: 210 20% 80%;
-    --accent: 225 15% 25%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 225 15% 30%;
-    --input: 225 15% 30%;
-    --ring: 200 95% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --glow: 200 95% 60%;
+
+  /* Obsidian Rose: near-black with a rose-gold accent; the softer sibling of the gold. */
+  .rose {
+    --background: 350 8% 4%;
+    --foreground: 20 25% 95%;
+    --card: 350 7% 7.5%;
+    --card-foreground: 20 25% 95%;
+    --popover: 350 7% 7%;
+    --popover-foreground: 20 25% 95%;
+    --primary: 14 62% 72%;
+    --primary-foreground: 350 12% 6%;
+    --primary-ink: 14 72% 77%;
+    --secondary: 350 6% 12%;
+    --secondary-foreground: 20 25% 95%;
+    --muted: 350 6% 12%;
+    --muted-foreground: 10 8% 70%;
+    --accent: 350 6% 13%;
+    --accent-foreground: 20 25% 95%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 350 6% 16%;
+    --input: 350 6% 16%;
+    --ring: 14 62% 72%;
+    --glow: 14 70% 65%;
+    --glow-2: 330 55% 55%;
+    --pattern: 14 62% 72%;
+    --success: 142 65% 48%;
+    --grain-opacity: 0.045;
+  }
+
+  /* Emerald Noir: green-tinted black, jade accent, with gold as the second light. */
+  .emerald {
+    --background: 160 18% 4%;
+    --foreground: 150 15% 95%;
+    --card: 160 14% 7.5%;
+    --card-foreground: 150 15% 95%;
+    --popover: 160 14% 7%;
+    --popover-foreground: 150 15% 95%;
+    --primary: 155 55% 50%;
+    --primary-foreground: 160 30% 5%;
+    --primary-ink: 155 60% 58%;
+    --secondary: 160 10% 12%;
+    --secondary-foreground: 150 15% 95%;
+    --muted: 160 10% 12%;
+    --muted-foreground: 150 8% 70%;
+    --accent: 160 10% 13%;
+    --accent-foreground: 150 15% 95%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 160 10% 16%;
+    --input: 160 10% 16%;
+    --ring: 155 55% 50%;
+    --glow: 155 60% 45%;
+    --glow-2: 45 90% 55%;
+    --pattern: 155 55% 50%;
+    --success: 142 70% 55%;
+    --grain-opacity: 0.045;
+  }
+
+  /* Sapphire: deep navy with a platinum/ice accent (replaces the old "fresh" theme). */
+  .sapphire {
+    --background: 225 40% 8%;
+    --foreground: 215 30% 96%;
+    --card: 225 34% 12%;
+    --card-foreground: 215 30% 96%;
+    --popover: 225 36% 10%;
+    --popover-foreground: 215 30% 96%;
+    --primary: 212 38% 82%;
+    --primary-foreground: 225 45% 10%;
+    --primary-ink: 212 60% 80%;
+    --secondary: 225 28% 17%;
+    --secondary-foreground: 215 30% 96%;
+    --muted: 225 28% 17%;
+    --muted-foreground: 218 18% 72%;
+    --accent: 225 28% 18%;
+    --accent-foreground: 215 30% 96%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 24% 21%;
+    --input: 225 24% 21%;
+    --ring: 212 60% 75%;
+    --glow: 215 90% 60%;
+    --glow-2: 260 70% 65%;
+    --pattern: 212 50% 75%;
+    --success: 150 62% 48%;
+    --grain-opacity: 0.04;
   }
 }
 
 @layer base {
-  html {
-    /* @apply scroll-smooth; */
-  }
   * {
     @apply border-border;
   }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Native scrollbars and controls match the theme from first paint. next-themes' inline
+     color-scheme only covers light and dark before hydration; the rest are dark-family. */
+  html:is(.dark, .rose, .emerald, .sapphire) {
+    color-scheme: dark;
+  }
+  html.light {
+    color-scheme: light;
+  }
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+  }
+  /* In-page jumps land below the sticky header. */
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+  }
+  /* Tailwind v4's preflight gives buttons the default cursor; restore the hand on everything
+     clickable (as the v4 upgrade guide suggests), but not on disabled controls. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='menuitem']:not([data-disabled]),
+  [role='menuitemradio']:not([data-disabled]),
+  [role='menuitemcheckbox']:not([data-disabled]),
+  [role='option']:not([aria-disabled='true']),
+  [role='tab']:not([aria-disabled='true']),
+  summary,
+  label[for],
+  select:not(:disabled) {
+    cursor: pointer;
   }
 }
 
-@layer utilities {
-  .animate-neon-ring {
-    animation: neon-ring 4s linear infinite;
-  }
-  
-  .interactive-glow {
-    box-shadow: 0 0 15px hsl(var(--glow) / 0.5),
-      0 0 30px hsl(var(--glow) / 0.4), 0 0 45px hsl(var(--glow) / 0.3),
-      0 0 60px hsl(var(--glow) / 0.2);
-    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
-  }
+/*
+  Static film grain over the whole page for depth (not animated, so it costs nothing per frame).
+*/
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-  .interactive-glow:hover {
-    box-shadow: 0 0 30px hsl(var(--glow) / 0.9),
-      0 0 45px hsl(var(--glow) / 0.8), 0 0 60px hsl(var(--glow) / 0.7),
-      0 0 75px hsl(var(--glow) / 0.5);
-  }
+/*
+  Failsafe: if JS hasn't started within 4s, show all scroll-reveal content so a failed
+  script can't leave the page blank. MotionProvider sets data-motion-ready to switch it off.
+  This is not an animation; it only jumps to the final state.
+*/
+html:not([data-motion-ready]) [data-reveal] {
+  animation: reveal-failsafe 0s 4s forwards;
+}
 
-  @keyframes neon-ring {
-    0% {
-      transform: rotate(0deg);
-      box-shadow: 0 0 5px hsl(var(--primary) / 0.8),
-        0 0 10px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.6),
-        0 0 30px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.2);
-    }
-    50% {
-      box-shadow: 0 0 10px hsl(var(--primary) / 0.8),
-        0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.6),
-        0 0 40px hsl(var(--primary) / 0.4), 0 0 50px hsl(var(--primary) / 0.2);
-    }
-    100% {
-      transform: rotate(360deg);
-      box-shadow: 0 0 5px hsl(var(--primary) / 0.8),
-        0 0 10px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.6),
-        0 0 30px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.2);
-    }
-  }
-
-  @keyframes gradient-move {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  .animate-scroll-horizontal {
-    animation: scroll-horizontal 20s linear infinite;
-  }
-  
-  .animate-scroll-horizontal-reverse {
-    animation: scroll-horizontal-reverse 20s linear infinite;
-  }
-
-  @keyframes scroll-horizontal {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  @keyframes scroll-horizontal-reverse {
-    from {
-      transform: translateX(-50%);
-    }
-    to {
-      transform: translateX(0);
-    }
+@keyframes reveal-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

@@ -1,0 +1,18 @@
+/* Theme-change View Transition styles. Owned by the theme toggle (src/lib/theme-transition.ts).
+   No CSS keyframes here (Motion is the only animation system): the UA animations are switched
+   off and theme-transition.ts drives the pseudo-element with element.animate().
+
+   The new theme is revealed by a circle mask with a feathered edge (solid to 75% of its radius,
+   then fading out), grown from the toggle button. The old snapshot just sits underneath. The
+   mask starts at size 0, so no frame shows the new theme before the circle starts growing. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  mask-image: radial-gradient(closest-side, #000 75%, transparent);
+  mask-repeat: no-repeat;
+  mask-size: 0 0;
+}
