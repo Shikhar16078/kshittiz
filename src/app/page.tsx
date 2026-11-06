@@ -7,6 +7,7 @@ import { Education } from '@/components/sections/education';
 import { Projects } from '@/components/sections/projects';
 import { Contact } from '@/components/sections/contact';
 import { getSiteConfig } from '@/lib/site-config';
+import { StructuredData } from '@/components/structured-data';
 
 // Prerendered, and rebuilt in the background at most once a minute so Global Config edits
 // (status, location, résumé, timezone) show up without a deploy.
@@ -16,6 +17,7 @@ export default async function Home() {
   const config = await getSiteConfig();
   return (
     <div className="flex min-h-screen flex-col">
+      <StructuredData />
       <Header config={config} />
       <main className="grow">
         <Hero config={config} />
