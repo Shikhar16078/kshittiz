@@ -15,7 +15,7 @@ import {
   DURATION,
   EASE_OUT,
   REVEAL_MARGIN_PAGE_END,
-  fadeUp,
+  rise,
   springSnappy,
   staggerChildren,
 } from '@/lib/motion';
@@ -116,6 +116,7 @@ export function FooterNav({ links }: { links: NavLink[] }) {
   const { itemProps, pill, clear } = useHoverPill();
   const cascade = useCascade();
   const reduce = useReducedMotion();
+  const fadeUp = rise(reduce);
 
   return (
     <nav aria-label="Footer">
@@ -163,6 +164,7 @@ export function FooterSocials({ links }: { links: SocialLink[] }) {
   const { itemProps, pill, clear } = useHoverPill();
   const cascade = useCascade();
   const reduce = useReducedMotion();
+  const fadeUp = rise(reduce);
 
   return (
     <LayoutGroup>

@@ -27,6 +27,9 @@ export const REVEAL_AMOUNT = 0.1;
 export const REVEAL_MARGIN = '100000px 0px -12% 0px';
 /** Trigger line at the very bottom of the screen, for content at the end of the page. */
 export const REVEAL_MARGIN_PAGE_END = '100000px 0px 0px 0px';
+/** On touch screens the trigger line sits 10% *below* the screen, so a reveal has started (and
+ *  mostly finished) before the content scrolls into view, instead of popping in late. */
+export const REVEAL_MARGIN_TOUCH = '100000px 0px 10% 0px';
 
 export const springSnappy: Transition = {
   type: 'spring',
@@ -49,6 +52,29 @@ export const fadeUp: Variants = {
   hidden: { opacity: 0, y: RISE, transition: exitTransition },
   show: { opacity: 1, y: 0, transition: enterTransition },
 };
+
+/**
+ * The GPU version of `fadeUp`, for anything that enters on scroll or on load (where many run at
+ * once while the page is busy): `transform` and opacity, which Motion hands to the browser to run
+ * off the main thread. Reduced motion doesn't suppress `transform`, so pass it in: the rise is then
+ * instant and only the fade remains. The hidden pose is the same either way, so the server HTML
+ * never depends on it. `delay` adds to each transition (e.g. a stagger).
+ */
+export function rise(reduce: boolean | null, delay = 0, hideDelay = 0): Variants {
+  const still = reduce ? { transform: { duration: 0 } } : {};
+  return {
+    hidden: {
+      opacity: 0,
+      transform: `translateY(${RISE}px)`,
+      transition: { ...exitTransition, delay: hideDelay, ...still },
+    },
+    show: {
+      opacity: 1,
+      transform: 'translateY(0px)',
+      transition: { ...enterTransition, delay, ...still },
+    },
+  };
+}
 
 /** Parent variants that stagger children in, and back out in reverse at half the interval. */
 export function staggerChildren(interval = 0.06, startDelay = 0): Variants {

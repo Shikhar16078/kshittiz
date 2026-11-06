@@ -2,7 +2,7 @@
 
 import type { SiteConfig } from '@/lib/site-config';
 
-import { m, type Variants } from 'motion/react';
+import { m, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, MapPin } from 'lucide-react';
 import { personalData } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 import {
   DURATION,
   EASE_OUT,
-  fadeUp,
+  rise,
   springSnappy,
   staggerChildren,
 } from '@/lib/motion';
@@ -39,6 +39,9 @@ const focusRing =
   'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 
 export function Hero({ config }: { config: SiteConfig }) {
+  // GPU entrance (transform + opacity): it plays while the page is still starting up, when
+  // main-thread animation would stutter.
+  const fadeUp = rise(useReducedMotion());
   const { status, location, resume } = config;
 
   return (
