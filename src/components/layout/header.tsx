@@ -371,7 +371,9 @@ export function Header({ config }: { config: SiteConfig }) {
       className={cn(
         'sticky top-0 z-50 w-full border-b transition-[background-color,border-color] duration-300',
         scrolled
-          ? 'border-border bg-background/80 backdrop-blur-xs'
+          // Backdrop blur re-blurs everything scrolling under the header each frame; phones get a
+          // near-opaque bar instead.
+          ? 'border-border bg-background/95 pointer-fine:bg-background/80 pointer-fine:backdrop-blur-xs'
           : 'border-transparent bg-transparent',
       )}
     >

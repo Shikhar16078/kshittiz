@@ -173,7 +173,7 @@ function DriftRows({
 
 /**
  * The logo wall: rows of tiles drifting in opposite directions on a plane tilted back in 3D
- * (following the cursor a little on mouse/trackpad), with faded edges. Three rows from md up,
+ * (following the cursor a little; mouse/trackpad only, flat on touch screens), with faded edges. Three rows from md up,
  * two smaller ones on phones. It's decorative for assistive tech (`aria-hidden`, nothing
  * focusable): keyboard and screen-reader users get the same tiles as real buttons in the grid
  * (`SkillGrid`), via the pause control or a category chip.
@@ -204,11 +204,14 @@ export function SkillWall({
     <div
       aria-hidden
       // Full bleed: wider than the container, edge to edge (the section clips the overflow).
-      className="relative mx-[calc(50%-50vw)] select-none [perspective:1200px] [mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]"
+      // The 3D tilt and the mask over the whole plane are mouse/trackpad only: on phones every
+      // marquee frame would recomposite a masked 3D surface, which their GPUs drop frames on.
+      className="relative mx-[calc(50%-50vw)] select-none pointer-fine:[perspective:1200px] pointer-fine:[mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]"
     >
       <m.div
         className="flex flex-col py-4 md:py-5"
-        style={{ rotateX, rotateY: tiltY }}
+        // Flat for the server render and hydration (fine is false until mounted).
+        style={fine ? { rotateX, rotateY: tiltY } : undefined}
         onPointerEnter={(e) => {
           if (tiltable) rect.current = e.currentTarget.getBoundingClientRect();
         }}
