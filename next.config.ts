@@ -19,7 +19,9 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
-  ...(isDev ? [] : ['upgrade-insecure-requests']),
+  // Only on Vercel, which serves HTTPS. Elsewhere (`next start` opened from a phone over the LAN)
+  // Safari would upgrade every asset to https:// and load none of them.
+  ...(process.env.VERCEL ? ['upgrade-insecure-requests'] : []),
 ].join('; ');
 
 const securityHeaders = [
@@ -40,6 +42,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Don't generate AGENTS.md on `next dev`; CLAUDE.md covers it.
   agentRules: false,
+  // Let phones on the local network use the dev server (http://<LAN IP>:9002). Next blocks
+  // dev resources such as the HMR socket from any other host by default.
+  allowedDevOrigins: ['10.*.*.*', '192.168.*.*', '172.*.*.*', '*.local'],
   poweredByHeader: false,
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
