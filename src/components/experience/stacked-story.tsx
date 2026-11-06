@@ -25,7 +25,6 @@ import {
   isCurrent,
   Metric,
   piece,
-  revealAttr,
   RoleMeta,
   StackChips,
   Wins,
