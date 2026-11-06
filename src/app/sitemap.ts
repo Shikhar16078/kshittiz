@@ -8,6 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,
+      // Image sitemap entry: helps the profile photo show up in image search.
+      images: [`${siteUrl}/images/profile_dark.jpeg`],
     },
   ];
 }
