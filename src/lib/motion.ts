@@ -105,3 +105,36 @@ export const collapse: Variants = {
     },
   },
 };
+
+/**
+ * Turns per-axis keyframes into `transform` keyframes for endless ambient loops. Motion only hands
+ * `transform` (and opacity, filter, clip-path) to the browser to run on the GPU; the `x`/`y`/
+ * `scale`/`rotate` shorthands are computed on the main thread every frame, so a busy page makes
+ * them stutter. Arrays shorter than the longest hold their last value. Px for x/y, deg for rotate.
+ *
+ * Note: `reducedMotion="user"` does not suppress `transform` animations, so callers gate these
+ * loops themselves (`useAmbientMotion()`). Always give a `transform` animation an explicit
+ * `initial`: animating from the browser's `none` makes Motion start from scale(0).
+ */
+export function gpuKeyframes({
+  x = [0],
+  y = [0],
+  scale = [1],
+  rotate = [0],
+}: {
+  x?: readonly number[];
+  y?: readonly number[];
+  scale?: readonly number[];
+  rotate?: readonly number[];
+}): string[] {
+  const n = Math.max(x.length, y.length, scale.length, rotate.length);
+  const at = (a: readonly number[], i: number) => a[Math.min(i, a.length - 1)];
+  return Array.from(
+    { length: n },
+    (_, i) =>
+      `translate(${at(x, i)}px, ${at(y, i)}px) rotate(${at(rotate, i)}deg) scale(${at(scale, i)})`,
+  );
+}
+
+/** The resting pose of a `gpuKeyframes` loop. */
+export const GPU_REST = 'translate(0px, 0px) rotate(0deg) scale(1)';

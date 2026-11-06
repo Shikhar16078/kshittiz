@@ -4,9 +4,10 @@ import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import {
   animate,
   useInView,
-  useReducedMotion,
   type AnimationPlaybackControls,
 } from 'motion/react';
+import { GPU_REST, gpuKeyframes } from '@/lib/motion';
+import { useAmbientMotion } from '@/lib/motion-tier';
 import { GraduationCap, Rocket } from 'lucide-react';
 import type { Project } from '@/lib/types';
 import { cn, hash } from '@/lib/utils';
@@ -152,7 +153,8 @@ export function ProjectCover({
 }) {
   const root = useRef<HTMLDivElement>(null);
   const inView = useInView(root);
-  const reduce = useReducedMotion();
+  const ambient = useAmbientMotion();
+  const reduce = !ambient;
   const { art, background, drift } = useMemo(() => {
     const seed = hash(`${project.id}:${project.title}`);
     const rand = prng(seed);
@@ -182,8 +184,9 @@ export function ProjectCover({
     };
   }, [project.id, project.title]);
 
-  // The drift is one endless loop, paused off screen and sped up while the card is hovered
-  // (its playback speed eases, so the pattern never jumps).
+  // The drift is one endless GPU `transform` loop, paused off screen and sped up while the card
+  // is hovered (its playback speed eases, so the pattern never jumps). Off with reduced motion and
+  // on the lite motion tier.
   const artRef = useRef<HTMLDivElement>(null);
   const loop = useRef<AnimationPlaybackControls | null>(null);
   useEffect(() => {
@@ -191,13 +194,13 @@ export function ProjectCover({
     if (!el || reduce) return;
     loop.current = animate(
       el,
-      { x: drift.x, y: drift.y, scale: drift.scale },
+      { transform: gpuKeyframes(drift) },
       { duration: drift.duration, ease: 'easeInOut', repeat: Infinity }
     );
     return () => {
       loop.current?.stop();
       loop.current = null;
-      animate(el, { x: 0, y: 0, scale: 1 }, { duration: 0.6 });
+      animate(el, { transform: GPU_REST }, { duration: 0.6 });
     };
   }, [drift, reduce]);
 

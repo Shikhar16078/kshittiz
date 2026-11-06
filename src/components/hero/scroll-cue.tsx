@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import {
   m,
   useInView,
-  useReducedMotion,
   useScroll,
   useTransform,
   type Transition,
@@ -12,12 +11,13 @@ import {
 import { ChevronDown } from 'lucide-react';
 import { scrollToSection } from '@/lib/scroll-to-section';
 import { cn } from '@/lib/utils';
+import { useAmbientMotion } from '@/lib/motion-tier';
 
 // One 2.4s cycle: the wheel dot slides down and fades, then the two chevrons cascade after it,
 // each on a sine-like ease so the loop flows instead of ticking.
 const LOOP: Transition = { duration: 2.4, repeat: Infinity, ease: 'easeInOut' };
-const REST = { y: 0, opacity: 1, transition: { duration: 0.3 } };
-const CHEVRON_REST = { y: 0, opacity: 0.6, transition: { duration: 0.3 } };
+const REST = { transform: 'translateY(0px)', opacity: 1, transition: { duration: 0.3 } };
+const CHEVRON_REST = { transform: 'translateY(0px)', opacity: 0.6, transition: { duration: 0.3 } };
 
 /**
  * A small mouse-and-chevron cue at the foot of the hero that scrolls to the next section. It
@@ -32,14 +32,15 @@ export function ScrollCue({
   href?: string;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
+  const ambient = useAmbientMotion();
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 160], [1, 0]);
   const pointerEvents = useTransform(opacity, (v) => (v < 0.1 ? 'none' : 'auto'));
   const ref = useRef<HTMLAnchorElement>(null);
   const inView = useInView(ref);
-  // Not scroll-linked, so it runs on touch screens too; only on screen, never with reduced motion.
-  const bob = !reduce && inView;
+  // Not scroll-linked, so it runs on touch screens too; only on screen, never with reduced motion
+  // or on the lite tier. GPU `transform` loops.
+  const bob = ambient && inView;
 
   return (
     <m.a
@@ -59,10 +60,11 @@ export function ScrollCue({
       >
         <m.span
           className="h-1.5 w-1 rounded-full bg-current"
+          initial={REST}
           animate={
             bob
               ? {
-                  y: [0, 0, 9, 9],
+                  transform: ['translateY(0px)', 'translateY(0px)', 'translateY(9px)', 'translateY(9px)'],
                   opacity: [0, 1, 0.15, 0],
                   transition: { ...LOOP, times: [0, 0.15, 0.7, 1] },
                 }
@@ -75,10 +77,11 @@ export function ScrollCue({
           <m.span
             key={i}
             className={i === 1 ? '-mt-2.5' : undefined}
+            initial={CHEVRON_REST}
             animate={
               bob
                 ? {
-                    y: [0, 4, 0],
+                    transform: ['translateY(0px)', 'translateY(4px)', 'translateY(0px)'],
                     opacity: [0.25, 1, 0.25],
                     transition: { ...LOOP, delay: 0.35 + i * 0.18 },
                   }

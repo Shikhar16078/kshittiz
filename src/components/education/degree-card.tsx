@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
-import { m, useInView, useReducedMotion, type Variants } from 'motion/react';
+import { m, useInView, type Variants } from 'motion/react';
 import { ArrowRight, CalendarDays, GraduationCap } from 'lucide-react';
 import type { Education as EducationEntry } from '@/lib/types';
 import { projects } from '@/lib/data';
@@ -10,6 +10,7 @@ import { showProjects } from '@/lib/events';
 import { Card } from '@/components/ui/card';
 import { MotionButton } from '@/components/ui/motion-button';
 import { Spotlight } from '@/components/motion/spotlight';
+import { useAmbientMotion } from '@/lib/motion-tier';
 import { BorderBeam } from '@/components/motion/border-beam';
 import { Tilt } from '@/components/motion/tilt';
 import { useScrollReveal } from '@/components/reveal';
@@ -20,6 +21,8 @@ import {
   DURATION,
   EASE_OUT,
   exitTransition,
+  GPU_REST,
+  gpuKeyframes,
   springSnappy,
   staggerChildren,
 } from '@/lib/motion';
@@ -36,13 +39,14 @@ const chip: Variants = {
 
 /**
  * The crest as a large, faint watermark drifting slowly behind the card (a transform loop that
- * only runs on screen and not with reduced motion). Decorative.
+ * only runs on screen, as a GPU `transform` loop, and not with reduced motion or on the lite
+ * motion tier). Decorative.
  */
 function Watermark({ src }: { src: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { margin: '50px' });
-  const reduce = useReducedMotion();
-  const run = inView && !reduce;
+  const ambient = useAmbientMotion();
+  const run = inView && ambient;
   return (
     <div
       ref={ref}
@@ -51,15 +55,14 @@ function Watermark({ src }: { src: string }) {
     >
       <m.div
         className="h-full w-full opacity-[0.05] grayscale dark:opacity-[0.06]"
+        initial={{ transform: GPU_REST }}
         animate={
           run
             ? {
-                x: [0, -14, 6, 0],
-                y: [0, -10, 8, 0],
-                rotate: [0, -5, 3, 0],
+                transform: gpuKeyframes({ x: [0, -14, 6, 0], y: [0, -10, 8, 0], rotate: [0, -5, 3, 0] }),
                 transition: { duration: 22, ease: 'easeInOut', repeat: Infinity },
               }
-            : { x: 0, y: 0, rotate: 0, transition: { duration: 0.6 } }
+            : { transform: GPU_REST, transition: { duration: 0.6 } }
         }
       >
         <Image

@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { m, useInView, useReducedMotion, type Variants } from 'motion/react';
 import { DURATION, EASE_OUT, staggerChildren } from '@/lib/motion';
 import { cn } from '@/lib/utils';
+import { useAmbientMotion } from '@/lib/motion-tier';
 
 // The name is the largest text on screen, so it never starts at opacity 0 and is never masked
 // (either would delay Largest Contentful Paint): the server renders it fully visible, a little
@@ -27,6 +28,7 @@ export function HeroName({ name }: { name: string }) {
   const ref = useRef<HTMLHeadingElement>(null);
   const inView = useInView(ref);
   const reduce = useReducedMotion();
+  const ambient = useAmbientMotion();
   const words = name.split(' ');
   const letters = words.join('').length;
   // Shimmer is opacity-only, which reduced motion doesn't suppress, so gate it explicitly.
@@ -45,7 +47,7 @@ export function HeroName({ name }: { name: string }) {
         className="pointer-events-none absolute -inset-x-[12%] -inset-y-[45%] -z-10 bg-[radial-gradient(ellipse_closest-side,hsl(var(--glow)/0.16),transparent)]"
         initial={{ opacity: 0.3 }}
         animate={
-          inView && !reduce
+          inView && ambient
             ? {
                 opacity: [0.3, 0.85, 0.3],
                 transition: {

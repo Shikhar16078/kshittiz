@@ -1,11 +1,12 @@
 'use client';
 
 import { useRef } from 'react';
-import { m, useInView, useReducedMotion, type Transition } from 'motion/react';
+import { m, useInView, type Transition } from 'motion/react';
 import { RevealGroup, RevealItem, useScrollReveal } from '@/components/reveal';
 import { CountUp } from '@/components/count-up';
 import { EASE_OUT, springSnappy } from '@/lib/motion';
 import { cn } from '@/lib/utils';
+import { useAmbientMotion } from '@/lib/motion-tier';
 
 type Stat = { value: string; label: string };
 type Kind = 'year' | 'flow' | 'race' | 'dots';
@@ -51,11 +52,11 @@ function Flow({ shown, delay, live }: VisualProps) {
     >
       <m.span
         className="absolute inset-0"
-        initial={{ x: '60%' }}
+        initial={{ transform: 'translateX(60%)' }}
         animate={
           moving
             ? {
-                x: ['0%', '126%'],
+                transform: ['translateX(0%)', 'translateX(126%)'],
                 transition: {
                   duration: LAP,
                   ease: [0.45, 0, 0.55, 1],
@@ -64,7 +65,7 @@ function Flow({ shown, delay, live }: VisualProps) {
                   delay: delay + 0.6,
                 },
               }
-            : { x: '60%' }
+            : { transform: 'translateX(60%)' }
         }
       >
         <span className="absolute left-0 top-0 h-full w-6 -translate-x-full rounded-full bg-primary" />
@@ -200,8 +201,8 @@ export function HeroStats({ stats, className }: { stats: readonly Stat[]; classN
   // The top quarter of the screen doesn't count: the hero drifts down as the page scrolls, so the
   // stats linger there underneath the next section (IntersectionObserver ignores that cover).
   const inView = useInView(box, { margin: '-25% 0px 0px 0px' });
-  const reduce = useReducedMotion();
-  const live = inView && !reduce;
+  const ambient = useAmbientMotion();
+  const live = inView && ambient;
 
   if (stats.length === 0) return null;
   return (

@@ -18,6 +18,7 @@ import {
 } from '@/lib/motion';
 import { useScrollReveal } from '@/components/reveal';
 import { useFinePointer } from '@/hooks/use-fine-pointer';
+import { useAmbientMotion } from '@/lib/motion-tier';
 import { useLetterWave, WaveLetter } from '@/components/motion/wave-letters';
 
 type SectionWrapperProps = {
@@ -29,7 +30,8 @@ type SectionWrapperProps = {
 };
 
 /**
- * Ambient backdrop: a soft glow that drifts slowly (a looping transform, paused off screen) and, on mouse/trackpad devices, moves a little against the scroll for depth.
+ * Ambient backdrop: a soft glow that drifts slowly (a GPU `transform` loop, paused off screen and
+ * on the `lite` motion tier) and, on mouse/trackpad devices, moves a little against the scroll.
  * It's a radial gradient, not a blur filter, so it's cheap to composite on phones.
  */
 function SectionGlow({
@@ -41,6 +43,7 @@ function SectionGlow({
 }) {
   const fine = useFinePointer();
   const reduce = useReducedMotion();
+  const ambient = useAmbientMotion();
   const { scrollYProgress } = useScroll({
     target,
     offset: ['start end', 'end start'],
@@ -70,10 +73,18 @@ function SectionGlow({
               ? 'bg-[radial-gradient(circle,hsl(var(--glow)/0.10),transparent_65%)]'
               : 'bg-[radial-gradient(circle,hsl(var(--glow-2)/0.09),transparent_65%)]'
           )}
+          // Explicit start: animating `transform` from the browser's `none` would grow from scale(0).
+          initial={{ transform: 'translate(0px, 0px) scale(1)' }}
           animate={
-            inView && !reduce
-              ? { x: [0, 40, 0], y: [0, -30, 0], scale: [1, 1.08, 1] }
-              : { x: 0, y: 0, scale: 1 }
+            inView && ambient
+              ? {
+                  transform: [
+                    'translate(0px, 0px) scale(1)',
+                    'translate(40px, -30px) scale(1.08)',
+                    'translate(0px, 0px) scale(1)',
+                  ],
+                }
+              : { transform: 'translate(0px, 0px) scale(1)' }
           }
           transition={
             inView ? { duration: 18, repeat: Infinity, ease: 'easeInOut' } : { duration: 0 }
@@ -148,15 +159,16 @@ const BREATHE = { duration: 4.5, repeat: Infinity, ease: 'easeInOut' } as const;
 
 /**
  * The accent line under a title, idling once it has drawn in: it slowly breathes (scaleX and
- * opacity) while a small spot of light travels along it every few seconds. Both are transform /
- * opacity loops that only run while the line is on screen, and not at all with reduced motion.
+ * opacity) while a small spot of light travels along it every few seconds. Both are GPU
+ * `transform` / opacity loops that only run while the line is on screen, and not at all with
+ * reduced motion or on the `lite` motion tier.
  * The reveal (scaleX from 0) lives on the outer span, so it never fights the loop.
  */
 function AccentLine({ shown }: { shown: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref);
-  const reduce = useReducedMotion();
-  const live = shown && inView && !reduce;
+  const ambient = useAmbientMotion();
+  const live = shown && inView && ambient;
 
   return (
     <m.span
@@ -169,19 +181,24 @@ function AccentLine({ shown }: { shown: boolean }) {
     >
       <m.span
         className="absolute inset-0 rounded-full bg-primary"
+        initial={{ transform: 'scaleX(1)', opacity: 1 }}
         animate={
           live
-            ? { scaleX: [1, 1.45, 1], opacity: [1, 0.65, 1], transition: BREATHE }
-            : { scaleX: 1, opacity: 1, transition: { duration: DURATION.fast } }
+            ? {
+                transform: ['scaleX(1)', 'scaleX(1.45)', 'scaleX(1)'],
+                opacity: [1, 0.65, 1],
+                transition: BREATHE,
+              }
+            : { transform: 'scaleX(1)', opacity: 1, transition: { duration: DURATION.fast } }
         }
       />
       <m.span
         className="absolute -top-[3px] left-0 size-2 rounded-full bg-[radial-gradient(circle,hsl(var(--foreground)),hsl(var(--primary)/0.6)_45%,transparent_70%)]"
-        initial={{ x: -4, opacity: 0 }}
+        initial={{ transform: 'translateX(-4px)', opacity: 0 }}
         animate={
           live
             ? {
-                x: [-4, ACCENT_WIDTH - 4],
+                transform: ['translateX(-4px)', `translateX(${ACCENT_WIDTH - 4}px)`],
                 opacity: [0, 1, 1, 0],
                 transition: {
                   duration: 1.8,
@@ -191,7 +208,7 @@ function AccentLine({ shown }: { shown: boolean }) {
                   repeatDelay: 3.2,
                 },
               }
-            : { x: -4, opacity: 0, transition: { duration: DURATION.fast } }
+            : { transform: 'translateX(-4px)', opacity: 0, transition: { duration: DURATION.fast } }
         }
       />
     </m.span>

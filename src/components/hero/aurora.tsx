@@ -10,6 +10,8 @@ import {
   useTransform,
 } from 'motion/react';
 import { useFinePointer } from '@/hooks/use-fine-pointer';
+import { gpuKeyframes } from '@/lib/motion';
+import { useAmbientMotion } from '@/lib/motion-tier';
 import { cn } from '@/lib/utils';
 
 // Each blob drifts through its own loop. Durations are long and different from each other so the
@@ -58,20 +60,23 @@ export function Aurora() {
   const root = useRef<HTMLDivElement>(null);
   const blobs = useRef<(HTMLDivElement | null)[]>([]);
   const reduce = useReducedMotion();
+  const ambient = useAmbientMotion();
   const fine = useFinePointer();
   const inView = useInView(root, { margin: '200px' });
   const controls = useRef<Controls[]>([]);
   const drift = useRef<HTMLDivElement>(null);
 
-  // Started once (imperatively, so they can be paused and resumed without jumping).
+  // Started once (imperatively, so they can be paused and resumed without jumping). GPU
+  // `transform` loops, so they keep moving smoothly while the page is busy. Off with reduced motion
+  // and on the lite motion tier.
   useEffect(() => {
-    if (reduce) return;
+    if (!ambient) return;
     const started: Controls[] = [];
     BLOBS.forEach((blob, i) => {
       const el = blobs.current[i];
       if (!el) return;
       started.push(
-        animate(el, blob.keyframes, {
+        animate(el, { transform: gpuKeyframes(blob.keyframes) }, {
           duration: blob.duration,
           repeat: Infinity,
           ease: 'easeInOut',
@@ -79,11 +84,13 @@ export function Aurora() {
       );
     });
     // The grid drifts exactly one period diagonally per lap, so the linear loop is seamless.
-    if (drift.current) {
+    // Mouse/trackpad only: on phones moving the full-size masked grid layer costs a recomposite
+    // every frame; the blobs above still drift there.
+    if (drift.current && fine) {
       started.push(
         animate(
           drift.current,
-          { x: [0, DOT], y: [0, DOT] },
+          { transform: gpuKeyframes({ x: [0, DOT], y: [0, DOT] }) },
           { duration: DRIFT, repeat: Infinity, ease: 'linear' },
         ),
       );
@@ -93,11 +100,11 @@ export function Aurora() {
       controls.current.forEach((c) => c.stop());
       controls.current = [];
     };
-  }, [reduce]);
+  }, [ambient, fine]);
 
   useEffect(() => {
     controls.current.forEach((c) => (inView ? c.play() : c.pause()));
-  }, [inView, reduce]);
+  }, [inView, ambient, fine]);
 
   // Cursor light. The section's page offset is cached on enter and resize, so pointermove does
   // no layout reads: page coordinates minus the cached offset give the position inside it.
