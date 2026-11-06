@@ -10,24 +10,29 @@ const FADE_END = 600;
 
 /**
  * As the page scrolls, the hero content drifts down a little against the scroll and fades, so
- * the next section appears to slide over it. With reduced motion, and on touch screens (where
- * JS-driven movement lags behind native scrolling and jitters), it only fades.
+ * the next section appears to slide over it. With reduced motion it only fades. On touch screens
+ * it does neither: the hero there is taller than the screen, so a fade dimmed it while it was
+ * still being read, and JS-driven movement lags behind native scrolling.
  */
 export function HeroScrollAway({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
-  const still = useRef(true);
-
   const fine = useFinePointer();
-  // Read by the transform below on each scroll change, so a ref (no re-subscription needed).
+  // Read by the transforms below on each scroll change, so refs (no re-subscription needed).
+  // Both start "off", matching the server render (no movement, full opacity).
+  const still = useRef(true);
+  const touch = useRef(true);
   useEffect(() => {
     still.current = !!reduce || !fine;
+    touch.current = !fine;
   }, [reduce, fine]);
 
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, (v) =>
     still.current ? 0 : Math.min(v, 1000) * DRIFT,
   );
-  const opacity = useTransform(scrollY, [0, FADE_END], [1, 0.25]);
+  const opacity = useTransform(scrollY, (v) =>
+    touch.current ? 1 : 1 - 0.75 * Math.min(Math.max(v / FADE_END, 0), 1),
+  );
 
   return <m.div style={{ y, opacity }}>{children}</m.div>;
 }
