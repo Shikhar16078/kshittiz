@@ -100,6 +100,7 @@ export function CompanyLogo({
     >
       {job.logo ? (
         <Image
+          loading="eager"
           src={job.logo}
           alt=""
           width={size}

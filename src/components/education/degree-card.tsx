@@ -66,6 +66,7 @@ function Watermark({ src }: { src: string }) {
         }
       >
         <Image
+          loading="eager"
           src={src}
           alt=""
           width={288}
@@ -107,6 +108,7 @@ export function DegreeCard({ edu }: { edu: EducationEntry }) {
           <div className="flex items-start gap-4">
             {edu.logo ? (
               <Image
+                loading="eager"
                 src={edu.logo}
                 alt={`${edu.institution} crest`}
                 width={56}

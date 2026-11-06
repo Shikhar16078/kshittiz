@@ -30,6 +30,7 @@ export function RoleChip({ className }: { className?: string }) {
       <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-background/80 py-1 pl-2 pr-3.5 sm:py-1.5 sm:pl-2.5 sm:pr-4">
         {current.logo && (
           <Image
+            loading="eager"
             src={current.logo}
             alt=""
             width={20}

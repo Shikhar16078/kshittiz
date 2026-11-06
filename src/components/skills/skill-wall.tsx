@@ -13,6 +13,7 @@ import {
   type MotionValue,
 } from 'motion/react';
 import { Marquee } from '@/components/motion/marquee';
+import { MediaOnly } from '@/components/media-only';
 import { SkillTileFace } from '@/components/skills/skill-tile';
 import { useFinePointer } from '@/hooks/use-fine-pointer';
 import { DURATION, EASE_OUT, cappedInterval, springSnappy } from '@/lib/motion';
@@ -232,12 +233,17 @@ export function SkillWall({
         }}
         onClick={pointer.onClick}
       >
-        <div className="hidden md:block">
-          <DriftRows rows={desktopRows} config={DESKTOP_ROWS} filter={filter} boost={boost} />
-        </div>
-        <div className="md:hidden">
-          <DriftRows rows={mobileRows} config={MOBILE_ROWS} filter={filter} boost={boost} />
-        </div>
+        {/* Both sets in the server HTML (CSS shows one); the other is dropped after hydration. */}
+        <MediaOnly query="(min-width: 768px)">
+          <div className="hidden md:block">
+            <DriftRows rows={desktopRows} config={DESKTOP_ROWS} filter={filter} boost={boost} />
+          </div>
+        </MediaOnly>
+        <MediaOnly query="(max-width: 767.98px)">
+          <div className="md:hidden">
+            <DriftRows rows={mobileRows} config={MOBILE_ROWS} filter={filter} boost={boost} />
+          </div>
+        </MediaOnly>
       </m.div>
     </div>
   );
