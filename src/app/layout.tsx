@@ -4,7 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { MotionProvider } from '@/components/motion-provider';
 import { cn } from '@/lib/utils';
-import { personalData } from '@/lib/data';
+import { personalData, workExperience } from '@/lib/data';
 import { siteUrl } from '@/lib/site-url';
 import { THEME_BACKGROUND, THEMES } from '@/lib/themes';
 import { Analytics } from '@vercel/analytics/next';
@@ -24,6 +24,8 @@ const spaceGrotesk = Space_Grotesk({
   variable: '--font-space-grotesk',
   display: 'swap',
 });
+
+const isProduction = process.env.VERCEL_ENV === 'production';
 
 const [currentRole, ...previous] = personalData.title.split(' | ');
 const siteTitle = `${personalData.name} — ${currentRole.replace(/ at .*$/, '')}`;
@@ -56,9 +58,33 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
   },
-  icons: {
-    icon: '/images/app_icon.png',
-  },
+  // Icons and the manifest come from the file conventions in app/ (favicon.ico, icon.png,
+  // apple-icon.png, manifest.ts).
+  keywords: [
+    personalData.name,
+    'software engineer',
+    ...personalData.roles,
+    ...workExperience.map((job) => job.company),
+  ],
+  category: 'technology',
+  // Production is indexed with large image previews; previews and local builds are not (robots.ts
+  // says the same for crawlers that read robots.txt first).
+  robots: isProduction
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      }
+    : { index: false, follow: false },
+  // Stop iOS from turning numbers (years, stats) into phone links.
+  formatDetection: { telephone: false, email: false, address: false },
+  // Opened from the home screen: a solid status bar, so the sticky header isn't drawn under it.
+  appleWebApp: { title: personalData.name.split(' ')[0], statusBarStyle: 'black' },
 };
 
 // The default theme's --background, so the browser chrome blends in on first paint (not per OS
